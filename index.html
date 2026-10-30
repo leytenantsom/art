@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113923303', 'ym');
+
+    ym(113923303, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113923303" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ARTMATRIX // ART DUEL 03™ — Музейный Тактический Терминал</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23f4efe6'/%3E%3Crect x='14' y='14' width='36' height='36' rx='4' fill='none' stroke='%2312100e' stroke-width='4'/%3E%3Ccircle cx='25' cy='25' r='4' fill='%2312100e'/%3E%3Cpath d='M16 42 L28 30 L38 38 L44 32 L48 42' fill='none' stroke='%2312100e' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body {
+      margin: 0;
+      background-color: #090c12;
+      color: #f4f1ea;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* ФОН: «ЗВЁЗДНАЯ НОЧЬ» ВАН ГОГА (5-10% РАЗМЫТИЕ) + КООРДИНАТНАЯ СЕТКА С ПЛЮСИКАМИ */
+    .bg-fixed-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background-color: #090c12;
+    }
+    .bg-masterpiece-painting {
+      position: absolute;
+      inset: -16px;
+      width: calc(100% + 32px);
+      height: calc(100% + 32px);
+      background-image:
+        url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg');
+      background-size: cover;
+      background-position: center 35%;
+      filter: blur(2px) brightness(0.38) contrast(1.12) saturate(0.92);
+      transform: scale(1.03);
+    }
+    .bg-vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(212, 175, 118, 0.08) 0%, rgba(9, 12, 18, 0.74) 80%),
+        linear-gradient(180deg, rgba(9, 12, 18, 0.35) 0%, rgba(11, 15, 22, 0.62) 55%, rgba(7, 9, 14, 0.92) 100%);
+    }
+    .bg-tactical-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(244, 241, 234, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(244, 241, 234, 0.06) 1px, transparent 1px);
+      background-size: 96px 96px;
+    }
+
+    /* МАТОВЫЕ ПОЛУПРОЗРАЧНЫЕ КОНТЕЙНЕРЫ В МУЗЕЙНОМ ТОНЕ */
+    .sector-container {
+      background: rgba(16, 20, 29, 0.76);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(235, 220, 195, 0.15);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 248, 235, 0.10);
+    }
+
+    /* СТРОКИ-КНОПКИ ВНУТРИ БЛОКОВ КОНСТРУКТОРА И ОТВЕТОВ */
+    .row-pill {
+      background: rgba(24, 30, 42, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(235, 220, 195, 0.12);
+      color: #f4f1ea;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .row-pill:hover {
+      background: rgba(36, 44, 62, 0.88);
+      border-color: rgba(235, 220, 195, 0.30);
+    }
+    .row-pill.active {
+      background: #f5efe4 !important;
+      color: #111318 !important;
+      border-color: #f5efe4 !important;
+      box-shadow: 0 8px 28px rgba(245, 239, 228, 0.28);
+    }
+    .row-pill.active .right-meta {
+      color: #4a453d !important;
+      font-weight: 700;
+    }
+    .row-pill.active .sub-desc {
+      color: #3d3932 !important;
+    }
+    .row-pill.active .row-icon {
+      color: #111318 !important;
+    }
+
+    /* ВЕРХНИЕ ОВАЛЬНЫЕ ТАБЛЕТКИ В ШАПКЕ */
+    .top-pill {
+      background: rgba(18, 23, 33, 0.76);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(235, 220, 195, 0.18);
+      color: #ded6c8;
+      transition: all 0.15s ease;
+    }
+    .top-pill:hover {
+      border-color: rgba(245, 239, 228, 0.38);
+      color: #ffffff;
+    }
+    .top-pill.active {
+      background: #f5efe4;
+      color: #111318;
+      border-color: #f5efe4;
+      font-weight: 800;
+      box-shadow: 0 0 20px rgba(245, 239, 228, 0.28);
+    }
+
+    /* Хроно-ползунок */
+    input[type=range].tactical-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: rgba(10, 13, 19, 0.92);
+      border-radius: 999px;
+      border: 1px solid rgba(235, 220, 195, 0.25);
+      outline: none;
+    }
+    input[type=range].tactical-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: #f5efe4;
+      border: 3px solid #111318;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(245, 239, 228, 0.65);
+    }
+
+    /* Плавная анимация отдаления камеры в режиме Макро-Фрагмента */
+    .macro-canvas-zoom {
+      transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-[#f4f1ea] font-sans relative overflow-x-hidden selection:bg-[#f5efe4] selection:text-[#111318]">
+
+  <!-- СЛОЙ ФОНА: «ЗВЁЗДНАЯ НОЧЬ» ВАН ГОГА (5-10% РАЗМЫТИЕ) + СЕТКА -->
+  <div class="bg-fixed-layer">
+    <div class="bg-masterpiece-painting"></div>
+    <div class="bg-vignette-overlay"></div>
+    <div class="bg-tactical-grid"></div>
+
+    <!-- Плюсики на перекрестиях сетки -->
+    <div class="absolute top-[95px] left-[191px] text-[#e8dcc8]/25 font-mono text-xs">+</div>
+    <div class="absolute top-[95px] right-[191px] text-[#e8dcc8]/25 font-mono text-xs">+</div>
+    <div class="absolute top-[287px] left-[95px] text-[#e8dcc8]/20 font-mono text-xs">+</div>
+    <div class="absolute top-[287px] right-[287px] text-[#e8dcc8]/20 font-mono text-xs">+</div>
+    <div class="absolute bottom-[191px] left-[287px] text-[#e8dcc8]/20 font-mono text-xs">+</div>
+  </div>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main class="relative z-10 max-w-4xl mx-auto px-4 pt-5 pb-12">
+
+    <!-- ========================================================================= -->
+    <!-- ПОСТОЯННАЯ ВЕРХНЯЯ ШАПКА ARTMATRIX // ART DUEL 03™ -->
+    <!-- Клик по логотипу и названию возвращает в конструктор -->
+    <!-- ========================================================================= -->
+    <header class="pb-4 space-y-3">
+      <div class="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono tracking-[0.22em] text-[#cbbca4] uppercase">
+        <span class="w-2 h-2 rounded-full bg-[#f5efe4] animate-pulse inline-block"></span>
+        <span>[ DOMAIN: ART.GEODUEL.RU // MUSEUM PROTOCOL 03 ]</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <!-- Кликабельный логотип ARTMATRIX // ART DUEL 03™ (Возвращает в конструктор) -->
+        <button
+          type="button"
+          onclick="setScreen('menu')"
+          class="flex items-center gap-3.5 text-left group focus:outline-none"
+          title="Вернуться в конструктор"
+        >
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#f5efe4] text-[#111318] flex items-center justify-center shrink-0 shadow-[0_0_28px_rgba(245,239,228,0.25)] group-hover:scale-105 transition">
+            <svg viewBox="0 0 32 32" fill="none" class="w-7 h-7 sm:w-8 sm:h-8">
+              <rect x="4" y="5" width="24" height="22" rx="3" stroke="currentColor" stroke-width="2.2"/>
+              <circle cx="11.5" cy="12" r="2.3" fill="currentColor"/>
+              <path d="M5.5 23 L13 15.5 L18.5 20.5 L22.5 16.5 L26.5 23" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div>
+            <div class="text-sm sm:text-xl font-bold tracking-[0.18em] text-[#d8cbb8] uppercase leading-none">
+              ARTMATRIX //
+            </div>
+            <div class="flex items-start gap-2 mt-1">
+              <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-[#f5efe4] uppercase leading-none">
+                ART DUEL
+              </h1>
+              <span class="px-2 py-0.5 rounded-md bg-[#f5efe4] text-[#111318] font-mono font-black text-[10px] sm:text-xs tracking-tight shadow">
+                03™
+              </span>
+            </div>
+          </div>
+        </button>
+
+        <!-- Правый ряд овальных таблеток: СНАЧАЛА МИРОВЫЕ ШЕДЕВРЫ, ПОТОМ РУССКАЯ ЖИВОПИСЬ -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            id="scopeBtn-WORLD"
+            onclick="setScope('WORLD')"
+            class="top-pill active px-3.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs tracking-wider uppercase"
+          >
+            [ МИРОВЫЕ ШЕДЕВРЫ ]
+          </button>
+          <button
+            type="button"
+            id="scopeBtn-RU"
+            onclick="setScope('RU')"
+            class="top-pill px-3.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs tracking-wider uppercase"
+          >
+            [ РУССКАЯ ЖИВОПИСЬ ]
+          </button>
+          <button
+            type="button"
+            id="sfxToggleBtn"
+            onclick="toggleSfx()"
+            class="top-pill px-3.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs tracking-wider uppercase font-bold"
+          >
+            SFX: ON
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================================================= -->
+    <!-- ЭКРАН 1: КОНСТРУКТОР (4 БЛОКА БЕЗ ЛОГИЧЕСКИХ ПРОТИВОРЕЧИЙ) -->
+    <!-- ========================================================================= -->
+    <div id="screen-menu" class="space-y-5">
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        <!-- 01 // ХУДОЖЕСТВЕННАЯ ЭПОХА И СТИЛЬ -->
+        <section class="rounded-[26px] sector-container p-5 sm:p-6">
+          <div class="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-[#ebd6b6]/10">
+            <div id="titleBlock01" class="font-mono text-xs tracking-[0.16em] text-[#cbbca4] uppercase leading-snug">
+              [ 01 // ЭПОХА И ХУДОЖЕСТВЕННЫЙ СТИЛЬ ]
+            </div>
+            <div id="poolBlock01" class="font-mono text-xs font-bold tracking-wider text-[#f5efe4] uppercase text-right shrink-0">
+              ГАЛЕРЕЯ
+            </div>
+          </div>
+          <div id="gridEpochs" class="space-y-2.5"></div>
+        </section>
+
+        <!-- 02 // ЧТО ДАНО НА ЭКРАНЕ (ЗАДАНИЕ) -->
+        <section class="rounded-[26px] sector-container p-5 sm:p-6">
+          <div class="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-[#ebd6b6]/10">
+            <div class="font-mono text-xs tracking-[0.16em] text-[#cbbca4] uppercase leading-snug">
+              [ 02 // ЧТО ДАНО НА ЭКРАНЕ (ЗАДАНИЕ) ]
+            </div>
+            <div class="font-mono text-xs font-bold tracking-wider text-[#f5efe4] uppercase text-right shrink-0">
+              6 ЭКСПОЗИЦИЙ
+            </div>
+          </div>
+          <div id="gridQuestions" class="space-y-2.5"></div>
+        </section>
+
+        <!-- 03 // КАК ОТВЕЧАЕМ (МЕХАНИКА ОТВЕТА) -->
+        <section class="rounded-[26px] sector-container p-5 sm:p-6">
+          <div class="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-[#ebd6b6]/10">
+            <div class="font-mono text-xs tracking-[0.16em] text-[#cbbca4] uppercase leading-snug">
+              [ 03 // КАК ОТВЕЧАЕМ (МЕХАНИКА) ]
+            </div>
+            <div class="font-mono text-xs font-bold tracking-wider text-[#f5efe4] uppercase text-right shrink-0">
+              100% СОВМЕСТИМОСТЬ
+            </div>
+          </div>
+          <div id="gridAnswers" class="space-y-2.5"></div>
+        </section>
+
+        <!-- 04 // РЕЖИМ ИГРЫ & ДУЭЛЬ 1 НА 1 -->
+        <section class="rounded-[26px] sector-container p-5 sm:p-6">
+          <div class="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-[#ebd6b6]/10">
+            <div class="font-mono text-xs tracking-[0.16em] text-[#cbbca4] uppercase leading-snug">
+              [ 04 // РЕЖИМ & ДУЭЛЬ 1 НА 1 ]
+            </div>
+            <div class="flex items-center gap-1 font-mono text-[10px]">
+              <span class="text-[#cbbca4] mr-1">РАУНДЫ:</span>
+              <button type="button" onclick="setTotalRounds(10)" id="roundBtn-10" class="px-2 py-0.5 rounded bg-[#f5efe4] text-[#111318] font-bold">10</button>
+              <button type="button" onclick="setTotalRounds(20)" id="roundBtn-20" class="px-2 py-0.5 rounded bg-white/5 text-[#cbbca4]">20</button>
+              <button type="button" onclick="setTotalRounds(50)" id="roundBtn-50" class="px-2 py-0.5 rounded bg-white/5 text-[#cbbca4]">50</button>
+              <button type="button" onclick="setTotalRounds(999)" id="roundBtn-999" class="px-2 py-0.5 rounded bg-white/5 text-[#cbbca4]">∞</button>
+            </div>
+          </div>
+          <div id="gridModes" class="space-y-2.5"></div>
+        </section>
+
+      </div>
+
+      <!-- КНОПКА ЗАПУСКА МАТРИЦЫ -->
+      <div class="rounded-[26px] sector-container p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div id="footerArchiveBreakdown" class="text-xs font-mono text-[#cbbca4] tracking-wider uppercase text-center sm:text-left">
+          [ ГАЛЕРЕЯ ГОТОВА // МАКРО-ЗУМ И ВИЗУАЛЬНАЯ СЕТКА АКТИВИРОВАНЫ ]
+        </div>
+        <button
+          type="button"
+          onclick="handleLaunchClick()"
+          class="w-full sm:w-auto px-9 py-4 rounded-2xl bg-[#f5efe4] hover:bg-white text-[#111318] font-black text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2.5 transition transform active:scale-95 shadow-[0_0_30px_rgba(245,239,228,0.28)]"
+        >
+          <span id="launchBtnLabel">ЗАПУСТИТЬ ЭКСПОЗИЦИЮ</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ЭКРАН 2: ОНЛАЙН-ЛОББИ 1 НА 1 -->
+    <!-- ========================================================================= -->
+    <div id="screen-lobby" class="hidden max-w-xl mx-auto py-4">
+      <div class="rounded-[26px] sector-container p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-[#ebd6b6]/10">
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 rounded-xl bg-[#f5efe4] text-[#111318]">
+              <svg class="w-6 h-6" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="3" fill="currentColor"/>
+                <path d="M10 22C6.8 18.8 6.8 13.2 10 10M22 10C25.2 13.2 25.2 18.8 22 22" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                <path d="M6 25.5C1 20.5 1 11.5 6 6.5M26 6.5C31 11.5 31 20.5 26 25.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl font-black uppercase tracking-wider text-[#f5efe4]">ОНЛАЙН-АУКЦИОН 1 НА 1</h2>
+              <p class="text-xs font-mono text-[#cbbca4]">[ СИНХРОНИЗАЦИЯ ГАЛЕРЕИ ПО КОДУ ]</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-black/45 border border-[#ebd6b6]/15 text-center space-y-3">
+          <div class="text-[11px] font-mono text-[#cbbca4] uppercase tracking-widest">
+            ВАШ КОД КОМНАТЫ ДЛЯ ДРУГА:
+          </div>
+          <div class="flex items-center justify-center gap-3">
+            <span id="roomCodeDisplay" class="text-4xl sm:text-5xl font-mono font-black tracking-widest text-[#f5efe4]">4815</span>
+            <button type="button" onclick="createPeerHost()" class="px-4 py-2 rounded-xl bg-[#f5efe4] text-[#111318] font-mono font-black text-xs uppercase">
+              СОЗДАТЬ
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-mono text-[#cbbca4] uppercase">
+            Или введите код комнаты соперника:
+          </label>
+          <div class="flex gap-2">
+            <input
+              id="joinCodeInput"
+              type="text"
+              maxlength="4"
+              placeholder="4815"
+              class="flex-1 px-4 py-3 rounded-xl bg-black/55 border border-[#ebd6b6]/20 font-mono text-lg text-center tracking-widest text-[#f5efe4] focus:outline-none"
+            />
+            <button
+              type="button"
+              onclick="joinPeerRoom()"
+              class="px-6 py-3 rounded-xl bg-[#f5efe4] text-[#111318] font-black uppercase text-xs tracking-wider"
+            >
+              ПОДКЛЮЧИТЬСЯ
+            </button>
+          </div>
+        </div>
+
+        <div id="lobbyStatus" class="text-xs font-mono text-center text-[#d8cbb8]"></div>
+
+        <button
+          type="button"
+          onclick="startSession()"
+          class="w-full py-4 rounded-2xl bg-[#f5efe4] hover:bg-white text-[#111318] font-black uppercase tracking-wider text-sm transition"
+        >
+          НАЧАТЬ ДУЭЛЬ СЕЙЧАС
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ЭКРАН 3: ИГРОВОЙ ЭКРАН -->
+    <!-- ========================================================================= -->
+    <div id="screen-play" class="hidden space-y-4">
+      <!-- Полоса статуса раунда, комбо и очков -->
+      <div class="rounded-2xl sector-container px-5 py-3 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+        <div id="playLeftStat" class="text-[#cbbca4]">
+          РАУНД: <strong class="text-[#f5efe4]">1 / 10</strong>
+        </div>
+        <div id="playRightStat" class="flex items-center gap-4">
+          <span class="text-[#cbbca4]">КОМБО: <strong class="text-emerald-400">×0</strong></span>
+          <span class="text-[#cbbca4]">ОЧКИ: <strong class="text-[#f5efe4]">0 PTS</strong></span>
+        </div>
+      </div>
+
+      <!-- Главный музейный зал вопроса и ответа -->
+      <div class="rounded-[26px] sector-container p-5 sm:p-8 flex flex-col items-center">
+        <div id="playHeaderSubtitle" class="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-[#cbbca4] mb-4 text-center">
+          [ БАЗА +100 // СКОРОСТЬ ДО +50 // КОМБО-СТРИК +20× ]
+        </div>
+
+        <!-- Визуальный центр экспоната -->
+        <div id="playQuestionPrompt" class="w-full flex flex-col items-center"></div>
+
+        <!-- Плашка результата ответа с карточкой шедевра -->
+        <div id="playFeedbackBox" class="hidden mt-5 px-5 py-3 rounded-xl border font-mono text-xs sm:text-sm font-bold flex flex-col items-center gap-1 text-center"></div>
+
+        <!-- Механика ответа -->
+        <div id="playAnswerArea" class="w-full mt-6 flex flex-col items-center"></div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ЭКРАН 4: ИТОГИ МАТЧА -->
+    <!-- ========================================================================= -->
+    <div id="screen-summary" class="hidden max-w-lg mx-auto py-6">
+      <div class="rounded-[26px] sector-container p-8 text-center space-y-6">
+        <div class="w-16 h-16 rounded-2xl bg-[#f5efe4] text-[#111318] flex items-center justify-center mx-auto shadow-[0_0_25px_rgba(245,239,228,0.3)]">
+          <svg class="w-9 h-9" viewBox="0 0 32 32" fill="none">
+            <rect x="5" y="6" width="22" height="20" rx="3" stroke="currentColor" stroke-width="2.2"/>
+            <circle cx="12" cy="13" r="2.2" fill="currentColor"/>
+            <path d="M7 22 L14 15 L19 19 L25 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2 class="text-3xl font-black uppercase tracking-wider text-[#f5efe4]">
+          ЭКСПОЗИЦИЯ ЗАВЕРШЕНА
+        </h2>
+        <div id="summaryStatsContent"></div>
+        <div class="flex gap-3">
+          <button
+            type="button"
+            id="summaryPlayAgainBtn"
+            onclick="startSession()"
+            class="flex-1 py-3.5 rounded-xl bg-[#f5efe4] text-[#111318] font-black uppercase text-xs tracking-wider"
+          >
+            ИГРАТЬ СНОВА
+          </button>
+          <button
+            type="button"
+            onclick="setScreen('menu')"
+            class="flex-1 py-3.5 rounded-xl bg-white/10 text-[#f5efe4] font-black uppercase text-xs tracking-wider border border-[#ebd6b6]/20"
+          >
+            В КОНСТРУКТОР
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ЕДИНЫЙ НИЖНИЙ БЛОК ЭКОСИСТЕМЫ (ДЛЯ ВСЕХ САЙТОВ СЕТИ GEODUEL) -->
+    <!-- ========================================================================= -->
+    <footer class="mt-10 pt-6 border-t border-white/15">
+      <div class="flex items-center justify-between mb-3 px-1">
+        <span class="font-mono text-[10px] tracking-[0.2em] text-[#cbbca4] uppercase">
+          [ TACTICAL MATRIX NETWORK // ЭКОСИСТЕМА ИГР ]
+        </span>
+        <span class="font-mono text-[10px] text-white/40 uppercase">
+          3 ПРОЕКТА
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <!-- 01. GEOMATRIX -->
+        <a href="https://geoduel.ru" class="sector-container p-4 rounded-2xl flex flex-col justify-between hover:border-white/50 transition group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-sm tracking-wider text-[#f5efe4] group-hover:underline">
+              GEOMATRIX // GEO DUEL
+            </span>
+            <span class="px-2 py-0.5 rounded bg-white/15 text-[#f5efe4] font-mono font-bold text-[10px] border border-white/20">
+              01™
+            </span>
+          </div>
+          <p class="text-xs text-[#cbbca4] leading-relaxed">
+            Тактический географический терминал: 195 стран мира, флаги, гербы, столицы, силуэты границ и политическая карта на скорость.
+          </p>
+        </a>
+
+        <!-- 02. HISTMATRIX -->
+        <a href="https://hist.geoduel.ru" class="sector-container p-4 rounded-2xl flex flex-col justify-between hover:border-white/50 transition group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-sm tracking-wider text-[#f5efe4] group-hover:underline">
+              HISTMATRIX // HIST DUEL
+            </span>
+            <span class="px-2 py-0.5 rounded bg-white/15 text-[#f5efe4] font-mono font-bold text-[10px] border border-white/20">
+              02™
+            </span>
+          </div>
+          <p class="text-xs text-[#cbbca4] leading-relaxed">
+            Хронологический архив Истории России и Мира: великие сражения, точные даты, правители, летописные цитаты и хроно-шкала.
+          </p>
+        </a>
+
+        <!-- 03. ARTMATRIX (АКТИВНЫЙ) -->
+        <a href="https://art.geoduel.ru" class="sector-container p-4 rounded-2xl flex flex-col justify-between border-[#f5efe4]/50 transition group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-sm tracking-wider text-[#f5efe4]">
+              ARTMATRIX // ART DUEL
+            </span>
+            <span class="px-2 py-0.5 rounded bg-[#f5efe4] text-[#111318] font-mono font-black text-[10px]">
+              03™ • ВЫ ЗДЕСЬ
+            </span>
+          </div>
+          <p class="text-xs text-[#cbbca4] leading-relaxed">
+            Музейный терминал русской и мировой живописи: угадай шедевр и автора по полотну, макро-фрагменту, скрытому сюжету или эпохе.
+          </p>
+        </a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    // ==========================================
+    // ЗВУКОВОЙ ДВИЖОК (WEB AUDIO API) + ИКОНКИ ARTMATRIX
+    // ==========================================
+    class SoundEngine {
+      constructor() { this.ctx = null; this.muted = false; }
+      init() {
+        if (!this.ctx && typeof window !== 'undefined') {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+      }
+      play(type) {
+        if (this.muted) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          const now = this.ctx.currentTime;
+          if (type === 'click') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(590, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.04);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(now); osc.stop(now + 0.05);
+          } else if (type === 'correct') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+              const osc = this.ctx.createOscillator();
+              const gain = this.ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now + i * 0.055);
+              gain.gain.setValueAtTime(0.10, now + i * 0.055);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.055 + 0.22);
+              osc.connect(gain); gain.connect(this.ctx.destination);
+              osc.start(now + i * 0.055); osc.stop(now + i * 0.055 + 0.24);
+            });
+          } else if (type === 'wrong') {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(155, now);
+            osc.frequency.linearRampToValueAtTime(90, now + 0.25);
+            gain.gain.setValueAtTime(0.10, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.27);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(now); osc.stop(now + 0.28);
+          }
+        } catch (e) {}
+      }
+    }
+    const sfx = new SoundEngine();
+
+    function toggleSfx() {
+      sfx.muted = !sfx.muted;
+      const btn = document.getElementById('sfxToggleBtn');
+      btn.textContent = sfx.muted ? 'SFX: OFF' : 'SFX: ON';
+      btn.classList.toggle('opacity-50', sfx.muted);
+      if (!sfx.muted) sfx.play('click');
+    }
+
+    function getArtSvg(name, extraClass = 'w-6 h-6') {
+      switch (name) {
+        case 'frame':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><rect x="4" y="5" width="24" height="22" rx="3" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="12" r="2.2" fill="currentColor"/><path d="M5.5 23 L13 15.5 L18.5 20.5 L22.5 16.5 L26.5 23" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        case 'zoom_macro':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><circle cx="14.5" cy="14.5" r="8.5" stroke="currentColor" stroke-width="2"/><path d="M21 21 L27.5 27.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M14.5 10.5 V18.5 M10.5 14.5 H18.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+        case 'scroll_plot':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M7 5.5 H25 V26.5 H7 Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M11 11 H21 M11 16 H21 M11 21 H17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+        case 'palette':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M16 4 C9.4 4 4 9.2 4 15.6 C4 22 9.4 27 15.8 27 C17.8 27 19.2 25.5 19.2 23.8 C19.2 22.9 18.8 22.1 18.3 21.5 C17.8 20.9 17.5 20.3 17.5 19.6 C17.5 18.1 18.8 16.9 20.4 16.9 H22.5 C25.5 16.9 28 14.5 28 11.5 C28 7.2 22.6 4 16 4 Z" stroke="currentColor" stroke-width="1.9"/><circle cx="10.5" cy="13.5" r="1.6" fill="currentColor"/><circle cx="14.5" cy="9.5" r="1.6" fill="currentColor"/><circle cx="20" cy="10.5" r="1.6" fill="currentColor"/><circle cx="10.5" cy="19" r="1.6" fill="currentColor"/></svg>`;
+        case 'museum':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M4 11.5 L16 5 L28 11.5 Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M7.5 12 V24 M13 12 V24 M19 12 V24 M24.5 12 V24 M4 25.5 H28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+        case 'name_tag':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M9 7H5V25H9M23 7H27V25H23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 11.5H21M16 11.5V21.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+        case 'choices_4':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><rect x="4.5" y="4.5" width="9.5" height="9.5" rx="2" stroke="currentColor" stroke-width="1.8" fill="currentColor" fill-opacity="0.25"/><rect x="18" y="4.5" width="9.5" height="9.5" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="4.5" y="18" width="9.5" height="9.5" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="18" y="18" width="9.5" height="9.5" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>`;
+        case 'terminal_input':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><rect x="3.5" y="6" width="25" height="20" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12.5L13 16L8.5 19.5M15.5 19.5H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        case 'chrono_radar':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><circle cx="16" cy="16" r="11.5" stroke="currentColor" stroke-width="1.9"/><path d="M16 9.5 V16 L20.5 19" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>`;
+        case 'blitz_bolt':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M17.5 3.5L7.5 17.5H15.5L14 28.5L24.5 14.5H16.5L17.5 3.5Z" stroke="currentColor" stroke-width="1.9" fill="currentColor" fill-opacity="0.2" stroke-linejoin="round"/></svg>`;
+        case 'shield_life':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M16 4L25.5 7.8V15.5C25.5 21.8 21.2 26 16 28.5C10.8 26 6.5 21.8 6.5 15.5V7.8L16 4Z" stroke="currentColor" stroke-width="1.9" fill="currentColor" fill-opacity="0.22"/></svg>`;
+        case 'duel_swords':
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><path d="M6 26L25 7M25 7H18.5M25 7V13.5" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 26L7 7M7 7H13.5M7 7V13.5" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        default:
+          return `<svg viewBox="0 0 32 32" fill="none" class="${extraClass}"><circle cx="16" cy="16" r="10" stroke="currentColor" stroke-width="1.8"/></svg>`;
+      }
+    }
+
+    // ==========================================
+    // ЕДИНЫЙ МИРОВОЙ ТОП ЖИВОПИСИ (170 ШЕДЕВРОВ МИРА, ВКЛЮЧАЯ 78 ШЕДЕВРОВ РОССИИ — БЕЗ НЮ / 18+)
+    // ==========================================
+    const CURATED_HD_IMAGES = {
+      'Троица': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Angels_at_Mamre-trinity-rublev-1410.jpg/800px-Angels_at_Mamre-trinity-rublev-1410.jpg',
+      'Богоматерь Владимирская': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vladimirskaya.jpg/800px-Vladimirskaya.jpg',
+      'Спас Нерукотворный': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Spas_Nerukovorny_by_Simon_Ushakov_%281658%29.jpg/800px-Spas_Nerukovorny_by_Simon_Ushakov_%281658%29.jpg',
+      'Портрет А. С. Пушкина': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kiprensky_Pushkin.jpg/800px-Kiprensky_Pushkin.jpg',
+      'Последний день Помпеи': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg/1024px-Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg',
+      'Всадница': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Karl_Brullov_-_Horsewoman_-_Google_Art_Project.jpg/800px-Karl_Brullov_-_Horsewoman_-_Google_Art_Project.jpg',
+      'Девятый вал': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Hovhannes_Aivazovsky_-_The_Ninth_Wave_-_Google_Art_Project.jpg/1024px-Hovhannes_Aivazovsky_-_The_Ninth_Wave_-_Google_Art_Project.jpg',
+      'Явление Христа народу': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Alexander_Ivanov_-_The_Appearance_of_Christ_Before_the_People_%28The_Apparition_of_Christ_to_the_People%29_-_Google_Art_Project.jpg/1024px-Alexander_Ivanov_-_The_Appearance_of_Christ_Before_the_People_%28The_Apparition_of_Christ_to_the_People%29_-_Google_Art_Project.jpg',
+      'На пашне. Весна': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Alexey_Venetsianov_-_On_the_Ploughed_Field._Spring_-_Google_Art_Project.jpg/800px-Alexey_Venetsianov_-_On_the_Ploughed_Field._Spring_-_Google_Art_Project.jpg',
+      'Сватовство майора': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pavel_Fedotov_-_Major%27s_Marriage_Proposal_-_Google_Art_Project.jpg/1024px-Pavel_Fedotov_-_Major%27s_Marriage_Proposal_-_Google_Art_Project.jpg',
+      'Охотники на привале': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Vasily_Perov_-_%D0%9E%D1%85%D0%BE%D1%82%D0%BD%D0%B8%D0%BA%D0%B8_%D0%BD%D0%B0_%D0%BF%D1%80%D0%B8%D0%B2%D0%B0%D0%BB%D0%B5_-_Google_Art_Project.jpg/1024px-Vasily_Perov_-_%D0%9E%D1%85%D0%BE%D1%82%D0%BD%D0%B8%D0%BA%D0%B8_%D0%BD%D0%B0_%D0%BF%D1%80%D0%B8%D0%B2%D0%B0%D0%BB%D0%B5_-_Google_Art_Project.jpg',
+      'Тройка (Ученики мастеровые везут воду)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Vasily_Perov_-_Troika._Apprentices_Fetch_Water_-_Google_Art_Project.jpg/1024px-Vasily_Perov_-_Troika._Apprentices_Fetch_Water_-_Google_Art_Project.jpg',
+      'Бурлаки на Волге': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Ilya_Repin_-_Barge_Haulers_on_the_Volga_-_Google_Art_Project.jpg/1024px-Ilya_Repin_-_Barge_Haulers_on_the_Volga_-_Google_Art_Project.jpg',
+      'Иван Грозный и сын его Иван': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Ilya_Repin_-_Ivan_the_Terrible_and_His_Son_Ivan_on_16_November_1581_-_Google_Art_Project.jpg/1024px-Ilya_Repin_-_Ivan_the_Terrible_and_His_Son_Ivan_on_16_November_1581_-_Google_Art_Project.jpg',
+      'Запорожцы пишут письмо турецкому султану': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Repin_Cossacks.jpg/1024px-Repin_Cossacks.jpg',
+      'Не ждали': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Ilya_Repin_-_Unexpected_visitors.jpg/1024px-Ilya_Repin_-_Unexpected_visitors.jpg',
+      'Боярыня Морозова': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Vasily_Surikov_-_Boyarynya_Morozova_-_Google_Art_Project.jpg/1024px-Vasily_Surikov_-_Boyarynya_Morozova_-_Google_Art_Project.jpg',
+      'Утро стрелецкой казни': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Morning_of_the_Execution_of_the_Streltsy-Surikov-1881.jpg/1024px-Morning_of_the_Execution_of_the_Streltsy-Surikov-1881.jpg',
+      'Переход Суворова через Альпы': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Vasily_Surikov_-_%D0%9F%D0%B5%D1%80%D0%B5%D1%85%D0%BE%D0%B4_%D0%A1%D1%83%D0%B2%D0%BE%D1%80%D0%BE%D0%B2%D0%B0_%D1%87%D0%B5%D1%80%D0%B5%D0%B7_%D0%90%D0%BB%D1%8C%D0%BF%D1%8B_-_Google_Art_Project.jpg/800px-Vasily_Surikov_-_%D0%9F%D0%B5%D1%80%D0%B5%D1%85%D0%BE%D0%B4_%D0%A1%D1%83%D0%B2%D0%BE%D1%80%D0%BE%D0%B2%D0%B0_%D1%87%D0%B5%D1%80%D0%B5%D0%B7_%D0%90%D0%BB%D1%8C%D0%BF%D1%8B_-_Google_Art_Project.jpg',
+      'Меншиков в Берёзове': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Surikov_Menshikov_in_Berezov.jpg/1024px-Surikov_Menshikov_in_Berezov.jpg',
+      'Богатыри': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Viktor_Vasnetsov_-_Bogatyrs_-_Google_Art_Project.jpg/1024px-Viktor_Vasnetsov_-_Bogatyrs_-_Google_Art_Project.jpg',
+      'Алёнушка': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Viktor_Vasnetsov_-_Alyonushka_-_Google_Art_Project.jpg/800px-Viktor_Vasnetsov_-_Alyonushka_-_Google_Art_Project.jpg',
+      'Витязь на распутье': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Viktor_Vasnetsov_-_%D0%92%D0%B8%D1%82%D1%8F%D0%B7%D1%8C_%D0%BD%D0%B0_%D1%80%D0%B0%D1%81%D0%BF%D1%83%D1%82%D1%8C%D0%B5_-_Google_Art_Project.jpg/1024px-Viktor_Vasnetsov_-_%D0%92%D0%B8%D1%82%D1%8F%D0%B7%D1%8C_%D0%BD%D0%B0_%D1%80%D0%B0%D1%81%D0%BF%D1%83%D1%82%D1%8C%D0%B5_-_Google_Art_Project.jpg',
+      'Утро в сосновом лесу': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Shishkin%2C_Ivan_-_Morning_in_a_Pine_Forest.jpg/1024px-Shishkin%2C_Ivan_-_Morning_in_a_Pine_Forest.jpg',
+      'Рожь': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Ivan_Shishkin_-_%D0%A0%D0%BE%D0%B6%D1%8C_-_Google_Art_Project.jpg/1024px-Ivan_Shishkin_-_%D0%A0%D0%BE%D0%B6%D1%8C_-_Google_Art_Project.jpg',
+      'Неизвестная': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Kramskoy_Portrait_of_a_Woman.jpg/800px-Kramskoy_Portrait_of_a_Woman.jpg',
+      'Христос в пустыне': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Christ_in_the_Wilderness_-_Ivan_Kramskoy_-_Google_Cultural_Institute.jpg/1024px-Christ_in_the_Wilderness_-_Ivan_Kramskoy_-_Google_Cultural_Institute.jpg',
+      'Апофеоз войны': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Vasily_Vereshchagin_-_The_Apotheosis_of_War_-_Google_Art_Project.jpg/1024px-Vasily_Vereshchagin_-_The_Apotheosis_of_War_-_Google_Art_Project.jpg',
+      'Грачи прилетели': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Alexei_Savrasov_-_The_Rooks_Have_Come_Back_-_Google_Art_Project.jpg/800px-Alexei_Savrasov_-_The_Rooks_Have_Come_Back_-_Google_Art_Project.jpg',
+      'Лунная ночь на Днепре': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Arkhip_Kuindzhi_-_Moonlit_Night_on_the_Dnieper_-_Google_Art_Project.jpg/1024px-Arkhip_Kuindzhi_-_Moonlit_Night_on_the_Dnieper_-_Google_Art_Project.jpg',
+      'Девочка с персиками': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Valentin_Serov_-_%D0%94%D0%B5%D0%B2%D0%BE%D1%87%D0%BA%D0%B0_%D1%81_%D0%BF%D0%B5%D1%80%D1%81%D0%B8%D0%BA%D0%B0%D0%BC%D0%B8_-_Google_Art_Project.jpg/800px-Valentin_Serov_-_%D0%94%D0%B5%D0%B2%D0%BE%D1%87%D0%BA%D0%B0_%D1%81_%D0%BF%D0%B5%D1%80%D1%81%D0%B8%D0%BA%D0%B0%D0%BC%D0%B8_-_Google_Art_Project.jpg',
+      'Демон сидящий': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Vrubel_Demon.jpg/1024px-Vrubel_Demon.jpg',
+      'Царевна-Лебедь': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg/800px-Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg',
+      'Над вечным покоем': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Isaac_Levitan_-_Over_Eternal_Peace_-_Google_Art_Project.jpg/1024px-Isaac_Levitan_-_Over_Eternal_Peace_-_Google_Art_Project.jpg',
+      'Золотая осень': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Isaac_Levitan_-_Golden_Autumn_-_Google_Art_Project.jpg/1024px-Isaac_Levitan_-_Golden_Autumn_-_Google_Art_Project.jpg',
+      'Купчиха за чаем': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Boris_Kustodiev_-_Merchant%27s_Wife_at_Tea_-_Google_Art_Project.jpg/800px-Boris_Kustodiev_-_Merchant%27s_Wife_at_Tea_-_Google_Art_Project.jpg',
+      'Чёрный супрематический квадрат': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Kazimir_Malevich%2C_1915%2C_Black_Suprematic_Square%2C_oil_on_linen_canvas%2C_79.5_x_79.5_cm%2C_Tretyakov_Gallery%2C_Moscow.jpg/800px-Kazimir_Malevich%2C_1915%2C_Black_Suprematic_Square%2C_oil_on_linen_canvas%2C_79.5_x_79.5_cm%2C_Tretyakov_Gallery%2C_Moscow.jpg',
+      'Композиция VIII': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Vassily_Kandinsky%2C_1923_-_Composition_8%2C_oil_on_canvas%2C_140_cm_x_201_cm%2C_Solomon_R._Guggenheim_Museum%2C_New_York.jpg/1024px-Vassily_Kandinsky%2C_1923_-_Composition_8%2C_oil_on_canvas%2C_140_cm_x_201_cm%2C_Solomon_R._Guggenheim_Museum%2C_New_York.jpg',
+      'Мона Лиза (Джоконда)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg',
+      'Тайная вечеря': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg/1024px-%C3%9Altima_Cena_-_Da_Vinci_5.jpg',
+      'Дама с горностаем': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lady_with_an_Ermine_-_Leonardo_da_Vinci_-_Google_Art_Project.jpg/800px-Lady_with_an_Ermine_-_Leonardo_da_Vinci_-_Google_Art_Project.jpg',
+      'Весна (Примавера)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Botticelli-primavera.jpg/1024px-Botticelli-primavera.jpg',
+      'Сотворение Адама': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1024px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg',
+      'Афинская школа': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1024px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg',
+      'Сикстинская Мадонна': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/RAFAEL_-_Madonna_Sixtina_%28Gem%C3%A4ldegalerie_Alter_Meister%2C_Dresden%2C_1513-14._%C3%93leo_sobre_lienzo%2C_265_x_196_cm%29.jpg/800px-RAFAEL_-_Madonna_Sixtina_%28Gem%C3%A4ldegalerie_Alter_Meister%2C_Dresden%2C_1513-14._%C3%93leo_sobre_lienzo%2C_265_x_196_cm%29.jpg',
+      'Портрет четы Арнольфини': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg/800px-Van_Eyck_-_Arnolfini_Portrait.jpg',
+      'Охотники на снегу (Зима)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg/1024px-Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg',
+      'Вавилонская башня': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_%28Vienna%29_-_Google_Art_Project_-_edited.jpg/1024px-Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_%28Vienna%29_-_Google_Art_Project_-_edited.jpg',
+      'Призвание апостола Матфея': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Calling_of_Saint_Matthew-Caravaggo_%281599-1600%29.jpg/1024px-The_Calling_of_Saint_Matthew-Caravaggo_%281599-1600%29.jpg',
+      'Ночной дозор': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/1024px-The_Night_Watch_-_HD.jpg',
+      'Возвращение блудного сына': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Rembrandt_Harmensz._van_Rijn_-_The_Return_of_the_Prodigal_Son_-_Google_Art_Project.jpg/800px-Rembrandt_Harmensz._van_Rijn_-_The_Return_of_the_Prodigal_Son_-_Google_Art_Project.jpg',
+      'Девушка с жемчужной серёжкой': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg',
+      'Молочница': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg/800px-Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg',
+      'Менины (Фрейлины)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/800px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg',
+      'Бонапарт на перевале Сен-Бернар': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg/800px-David_-_Napoleon_crossing_the_Alps_-_Malmaison2.jpg',
+      'Третье мая 1808 года в Мадриде': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/El_Tres_de_Mayo%2C_by_Francisco_de_Goya%2C_from_Prado_thin_black_margin.jpg/1024px-El_Tres_de_Mayo%2C_by_Francisco_de_Goya%2C_from_Prado_thin_black_margin.jpg',
+      'Плот «Медузы»': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/1024px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg',
+      'Странник над морем тумана': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/800px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg',
+      'Большая волна в Канагаве': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/1024px-Tsunami_by_hokusai_19th_century.jpg',
+      'Впечатление. Восходящее солнце': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Monet_-_Impression%2C_Sunrise.jpg/1024px-Monet_-_Impression%2C_Sunrise.jpg',
+      'Бал в Мулен де ла Галетт': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Pierre-Auguste_Renoir%2C_Le_Moulin_de_la_Galette.jpg/1024px-Pierre-Auguste_Renoir%2C_Le_Moulin_de_la_Galette.jpg',
+      'Звёздная ночь': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+      'Подсолнухи': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vincent_Willem_van_Gogh_127.jpg/800px-Vincent_Willem_van_Gogh_127.jpg',
+      'Крик': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg',
+      'Поцелуй': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/800px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg',
+      'Герника': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Mural_del_Gernika.jpg/1024px-Mural_del_Gernika.jpg'
+    };
+
+    const PALETTE_PRESETS = {
+      RU_OLD: ['#c99e4c', '#7a3b28', '#291d14'],
+      RU_ROM: ['#2b546b', '#d98c3b', '#1c2129'],
+      RU_PER: ['#546348', '#8c6945', '#2b323b'],
+      RU_MOD: ['#4a3d6b', '#d49b66', '#212938'],
+      RU_AVN: ['#d92b2b', '#24477a', '#e8dec8'],
+      W_REN: ['#594d36', '#9e7d52', '#263028'],
+      W_BAR: ['#241a12', '#c99742', '#7d2822'],
+      W_ROM: ['#364d63', '#c96238', '#1f2429'],
+      W_IMP: ['#2d4d7a', '#e8b53b', '#4d6b59'],
+      W_MOD: ['#c9482b', '#29384d', '#d9b542']
+    };
+
+    // 1. РУССКИЕ ШЕДЕВРЫ В МИРОВОМ ТОПЕ (78 ВЕЛИЧАЙШИХ КАРТИН РУССКОЙ ЖИВОПИСИ — 0% НЮ)
+    // Формат: eraRU | eraWORLD | Год | Название | Художник | Музей | Сюжет | Досье мастера
+    const RAW_RUSSIAN_IN_TOP = `
+RU_OLD|W_REN|1130|Богоматерь Владимирская|Иконописный канон (обновление А. Рублёва)|Третьяковская галерея, Москва|Младенец нежно прижимается щекой к лику Богородицы — эталон иконографического типа «Елеуса» (Умиление).|Главная чудотворная святыня Древней Руси, перенесённая Андреем Боголюбским во Владимир, а в 1395 году встреченная в Москве.
+RU_OLD|W_REN|1190|Ангел Златые Власы|Новгородская школа иконописи|Государственный Русский музей, Санкт-Петербург|Крупный лик архангела с большими печальными глазами и сияющими нитями сусального золота (ассистом) в кудрях.|Древнейший шедевр домонгольской иконописи XII века, в котором каждая прядь волос проложена настоящим золотом.
+RU_OLD|W_REN|1392|Донская икона Божией Матери|Феофан Грек|Третьяковская галерея, Москва|Торжественный и одновременно нежный образ Богоматери с Младенцем, по преданию сопровождавший русские полки на Куликовом поле.|Великий византийский и русский изограф-философ, расписавший храмы Новгорода и Благовещенский собор Кремля.
+RU_OLD|W_REN|1408|Спас в Силах|Андрей Рублёв|Третьяковская галерея, Москва|Христос Вседержитель на престоле в сиянии красного ромба и синего овала славы с символами четырех евангелистов.|Главный иконописец Древней Руси, создавший гармоничный канон высокого русского иконостаса.
+RU_OLD|W_REN|1425|Троица|Андрей Рублёв|Третьяковская галерея, Москва|Три ангела в безмолвной беседе склонились вокруг евхаристической чаши под дубом Мамврийским.|Вершина древнерусского искусства, написанная в память преподобного Сергия Радонежского для Троицкого собора.
+RU_OLD|W_REN|1500|Распятие|Дионисий|Третьяковская галерея, Москва|Утончённая, вытянутая фигура на кресте в окружении парящих ангелов и скорбящих предстоящих в светлых праздничных тонах.|Продолжатель традиций Андрея Рублёва на рубеже XV–XVI веков, автор фресок Ферапонтова монастыря.
+RU_OLD|W_BAR|1658|Спас Нерукотворный|Симон Ушаков|Третьяковская галерея, Москва|Лик Христа на белоснежном плате (убрусе), написанный с новым для XVII века объёмным светотеневым «живоподобием».|Возглавлял иконописную мастерскую Оружейной палаты Кремля при царе Алексее Михайловиче.
+RU_OLD|W_BAR|1673|Насаждение древа Государства Российского|Симон Ушаков|Третьяковская галерея, Москва|Князь Иван Калита и митрополит Петр у стен Московского Кремля поливают виноградное древо с Владимирской иконой и ветвями правителей.|Создал программную историко-богословскую аллегорию возвышения Москвы и династии Романовых.
+RU_ROM|W_ROM|1776|Смолянки (Портрет Хованской и Хрущовой)|Дмитрий Левицкий|Государственный Русский музей, Санкт-Петербург|Две юные воспитанницы Смольного института благородных девиц разыгрывают пасторальную сцену на фоне паркового пейзажа.|Блестящий мастер русского парадного и камерного портрета эпохи Екатерины II.
+RU_ROM|W_ROM|1784|Портрет А. П. Струйской|Фёдор Рокотов|Третьяковская галерея, Москва|Одухотворённое лицо молодой женщины с тёмными глазами выступает из мерцающей золотисто-розовой дымки рококо.|Мастер интимного психологического портрета XVIII века, вдохновивший строки поэта Заболоцкого «Любите живопись, поэты!».
+RU_ROM|W_ROM|1797|Портрет М. И. Лопухиной|Владимир Боровиковский|Третьяковская галерея, Москва|Мечтательная красавица в белом античном платье облокотилась о балюстраду на фоне берёзовой рощи и колосьев васильков.|Главный представитель русского сентиментализма в портретной живописи рубежа XVIII–XIX веков.
+RU_ROM|W_ROM|1816|Неаполитанский залив в лунную ночь|Сильвестр Щедрин|Государственный Русский музей, Санкт-Петербург|Рыбаки у костра на каменистом берегу на фоне залитой серебристым лунным светом морской глади и дымящегося Везувия.|Основоположник русской пленэрной пейзажной школы начала XIX века.
+RU_ROM|W_ROM|1820|На пашне. Весна|Алексей Венецианов|Третьяковская галерея, Москва|Крестьянка в русском сарафане и кокошнике легко ведёт под уздцы двух лошадей с бороной по весеннему полю рядом с младенцем.|Родоначальник русской бытовой крестьянской темы и поэтического сельского пейзажа.
+RU_ROM|W_ROM|1825|Кружевница|Василий Тропинин|Третьяковская галерея, Москва|Приветливая московская девушка с кокетливым взглядом отвлеклась от плетения кружев на коклюшках.|Выкупился из крепостной неволи только в 47 лет, став академиком и любимым портретистом Москвы.
+RU_ROM|W_ROM|1827|Портрет А. С. Пушкина|Орест Кипренский|Третьяковская галерея, Москва|Поэт со скрещёнными на груди руками и шотландским пледом на плече рядом с бронзовой статуэткой музы с лирой.|Создал прижизненный романтический канон облика великого поэта («Себя как в зеркале я вижу...»).
+RU_ROM|W_ROM|1827|Итальянский полдень|Карл Брюллов|Государственный Русский музей, Санкт-Петербург|Смуглая итальянка в солнечном саду тянется к тяжёлой прозрачной грозди спелого винограда.|Первый русский живописец, завоевавший прижизненную общеевропейскую славу в Италии и Франции.
+RU_ROM|W_ROM|1832|Всадница|Карл Брюллов|Третьяковская галерея, Москва|Юная наездница на горячем вороном скакуне останавливается у крыльца миланской виллы, где её встречает маленькая девочка в розовом платье.|Мастер блестящего романтического парадного портрета и виртуозной передачи фактуры бархата и шелка.
+RU_ROM|W_ROM|1833|Последний день Помпеи|Карл Брюллов|Государственный Русский музей, Санкт-Петербург|Молнии и багровый пепел Везувия освещают гибнущий античный город, где люди спасают близких среди падающих статуй.|Полотно вдохновило Гоголя, Пушкина и роман Бульвер-Литтона, став триумфом русской школы.
+RU_ROM|W_ROM|1842|Медный змий|Фёдор Бруни|Государственный Русский музей, Санкт-Петербург|Грандиозная библейская драма: в каменистой пустыне под дождём огненных змей Моисей указывает народу на спасительного медного змия.|Соперник Брюллова по Академии художеств и автор самого большого по площади холста Русского музея.
+RU_ROM|W_ROM|1848|Чесменский бой|Иван Айвазовский|Феодосийская картинная галерея|Ночная морская битва, в которой пылающие турецкие линейные корабли взлетают на воздух под ударами русских брандеров.|Воспел главные морские победы русского парусного флота от Чесмы и Наварина до Синопа.
+RU_ROM|W_ROM|1850|Девятый вал|Иван Айвазовский|Государственный Русский музей, Санкт-Петербург|Моряки на обломке мачты встречают самую грозную океанскую волну в первых золотистых лучах восходящего солнца.|Величайший русский маринист из Феодосии, написавший за жизнь более 6000 морских картин.
+RU_ROM|W_ROM|1857|Явление Христа народу|Александр Иванов|Третьяковская галерея, Москва|Иоанн Креститель на берегу Иордана указывает толпе на приближающегося вдали Мессию.|Посвятил созданию этой единственной картины более 20 лет жизни в Риме, выполнив свыше 600 этюдов.
+RU_ROM|W_ROM|1873|Радуга|Иван Айвазовский|Третьяковская галерея, Москва|Терпящий бедствие у скалистых берегов парусник среди бушующего урагана озаряется спасительной прозрачной радугой в водяной пыли.|Полотно ознаменовало переход мастера от романтических контрастов к тончайшей реалистической световоздушной гамме.
+RU_ROM|W_ROM|1881|Среди волн|Иван Айвазовский|Феодосийская картинная галерея|Бушующая черноморская стихия со свинцово-бирюзовыми волнами, пронизанная диагональным лучом света.|Написал этот монументальный шедевр в возрасте 80 лет всего за десять дней без предварительных эскизов.
+RU_PER|W_IMP|1848|Сватовство майора|Павел Федотов|Третьяковская галерея, Москва|В купеческом доме суматоха: бравый майор поправляет усы у дверей, а невеста в бальном платье рвётся убежать, но мать держит её за юбку.|Основоположник критического реализма и бытовой сатиры в русской живописи XIX века.
+RU_PER|W_IMP|1851|Свежий кавалер|Павел Федотов|Третьяковская галерея, Москва|В захламлённой комнатке мелкий чиновник в халате с папильотками в волосах горделиво тычет пальцем в только что полученный орден перед кухаркой с дырявыми сапогами.|Блестящая сатирическая притча в духе Гоголя о тщеславии петербургского чиновничества.
+RU_PER|W_IMP|1862|Неравный брак|Василий Пукирев|Третьяковская галерея, Москва|В полумраке церкви юная заплаканная невеста со свечой венчается с важным седым стариком-сановником.|Обличительное полотно, заставившее Святейший Синод издать указ против браков с огромной разницей в возрасте.
+RU_PER|W_IMP|1863|Тайная вечеря|Николай Ге|Государственный Русский музей, Санкт-Петербург|В тревожном контрастном свете светильника Иуда уходит в ночь, пока Христос и ученики погружены в трагическое раздумье.|Мастер драматической психологической и евангельской живописи Товарищества передвижников.
+RU_PER|W_IMP|1864|Княжна Тараканова|Константин Флавицкий|Третьяковская галерея, Москва|В каземате Петропавловской крепости во время катастрофического наводнения 1777 года узница в отчаянии стоит на кровати над прибывающей водой.|Первое крупное произведение русской живописи, посвящённое трагедии узников самодержавия.
+RU_PER|W_IMP|1866|Тройка (Ученики мастеровые везут воду)|Василий Перов|Третьяковская галерея, Москва|Трое измученных детей в морозную вьюгу изо всех сил тянут обледеневшую бочку с водой мимо монастырской стены.|Соучредитель Товарищества передвижников, открывший глаза общества на тяжелую долю городской бедноты.
+RU_PER|W_IMP|1871|Охотники на привале|Василий Перов|Третьяковская галерея, Москва|Трое охотников на осенней траве: бывалый рассказчик горячо травит охотничью байку, скептик усмехается, а юный новичок верит каждому слову.|Непревзойдённый мастер характерного психологического портрета в бытовом жанре.
+RU_PER|W_IMP|1871|Грачи прилетели|Алексей Саврасов|Третьяковская галерея, Москва|На кривых берёзах у сельского храма и подтаявшего снега суетятся чёрные птицы, возвещая пробуждение русской весны.|Родоначальник русского лирического «пейзажа настроения» и учитель Исаака Левитана.
+RU_PER|W_IMP|1871|Апофеоз войны|Василий Верещагин|Третьяковская галерея, Москва|Пирамида из человеческих черепов посреди выжженной пустыни, над которой кружит вороньё; на раме надпись: «Посвящается всем великим завоевателям».|Всемирно известный художник-баталист, погибший при взрыве броненосца «Петропавловск» в Порт-Артуре.
+RU_PER|W_IMP|1871|Пётр I допрашивает царевича Алексея в Петергофе|Николай Ге|Третьяковская галерея, Москва|За столом в дворцовом кабинете с шахматным полом суровый император буравит взглядом поникшего сына.|Открыл новую эпоху в русской исторической живописи, построенную на столкновении характеров и идей.
+RU_PER|W_IMP|1872|Христос в пустыне|Иван Крамской|Третьяковская галерея, Москва|На рассвете среди серых камней сидит погружённый в глубокую думу Спаситель со сжатыми на коленях руками.|Идейный лидер «Бунта четырнадцати» и основатель Товарищества передвижных художественных выставок.
+RU_PER|W_IMP|1872|Сосновый бор. Мачтовый лес в Вятской губернии|Иван Шишкин|Третьяковская галерея, Москва|Величественные корабельные сосны у прозрачного лесного ручья, к которому вышли напиться два бурых медведя.|Принесла Шишкину звание профессора Академии художеств за непревзойдённое знание родной природы.
+RU_PER|W_IMP|1873|Бурлаки на Волге|Илья Репин|Государственный Русский музей, Санкт-Петербург|Одиннадцать оборванных людей под палящим солнцем тянут бечевой тяжёлую баржу вдоль песчаного волжского берега.|Титан русского реализма, создавший галерею народных типов от попа-расстриги Канина до юного Ларьки.
+RU_PER|W_IMP|1878|Рожь|Иван Шишкин|Третьяковская галерея, Москва|Бескрайнее золотое ржаное поле под высоким летним небом, среди которого возвышаются могучие вековые сосны.|«Царь русского леса», прославившийся эпическим размахом и ботанической точностью родной природы.
+RU_PER|W_IMP|1878|Московский дворик|Василий Поленов|Третьяковская галерея, Москва|Залитый летним солнцем зелёный уголок старой Москвы в районе Арбата с белыми церквушками, колокольней и играющими детьми.|Реформатор русского пленэрного пейзажа, наполнивший живопись чистым воздухом и солнечным светом.
+RU_PER|W_IMP|1879|Берёзовая роща|Архип Куинджи|Третьяковская галерея, Москва|Яркая солнечная поляна с ослепительно-белыми стволами берёз и контрастными изумрудными тенями.|Виртуоз световых эффектов и декоративной мощи цвета в русском пейзаже.
+RU_PER|W_IMP|1880|Лунная ночь на Днепре|Архип Куинджи|Государственный Русский музей, Санкт-Петербург|Фосфоресцирующее изумрудное сияние полной луны прорывается сквозь облака и отражается в широкой ленте ночной реки.|Первая в истории русской живописи выставка одной картины, собиравшая многочасовые очереди на Большой Морской.
+RU_PER|W_IMP|1881|Утро стрелецкой казни|Василий Суриков|Третьяковская галерея, Москва|У стен Кремля и храма Василия Блаженного мятежные стрельцы со свечами прощаются с семьями под грозным взглядом Петра I.|Величайший мастер исторических народных трагедий переломных эпох русской истории.
+RU_PER|W_IMP|1881|Алёнушка|Виктор Васнецов|Третьяковская галерея, Москва|Безутешная босоногая девушка сидит на камне у тёмного лесного омута среди осенних осинок, положив голову на колени.|Основоположник былинно-сказочного направления и «неорусского стиля» в живописи и архитектуре.
+RU_PER|W_IMP|1882|Витязь на распутье|Виктор Васнецов|Государственный Русский музей, Санкт-Петербург|Богатырь на белом коне перед вещим камнем в глухой степи читает зловещую надпись: «Как пряму ехати — живу не бывати...».|Воплотил на холсте эпический мир русских былин и народного фольклора.
+RU_PER|W_IMP|1883|Неизвестная|Иван Крамской|Третьяковская галерея, Москва|Горделивая красавица в бархатной шляпке с пером и собольих мехах смотрит из открытой коляски на фоне заснеженного Аничкова дворца.|Создал самый загадочный женский образ русской живописи XIX века («Русская Джоконда»).
+RU_PER|W_IMP|1883|Меншиков в Берёзове|Василий Суриков|Третьяковская галерея, Москва|В низкой бревенчатой избе сибирской ссылки некогда всесильный фаворит Петра I сидит у стола в окружении своих детей.|Передал шекспировскую мощь падения «полудержавного властелина» и угасание его дочери Марии.
+RU_PER|W_IMP|1883|Крестный ход в Курской губернии|Илья Репин|Третьяковская галерея, Москва|По пыльной дороге среди вырубленного леса движется многоликая толпа всех сословий пореформенной России — от помещицы и урядника до горбуна.|Энциклопедия русской жизни XIX века, объединившая на одном полотне более семидесяти характеров.
+RU_PER|W_IMP|1884|Не ждали|Илья Репин|Третьяковская галерея, Москва|В светлую гостиную внезапно входит вернувшийся из сибирской каторги ссыльный революционер, и вся семья замирает в оцепенении.|Мастер психологической мизансцены, переписавший выражение лица главного героя ради максимальной глубины.
+RU_PER|W_IMP|1885|Иван Грозный и сын его Иван|Илья Репин|Третьяковская галерея, Москва|Обезумевший от ужаса и раскаяния царь на багровом ковре судорожно прижимает к себе смертельно раненного им царевича.|Картина вызвала такой эмоциональный шок, что Александр III временно запретил её публичный показ.
+RU_PER|W_IMP|1887|Боярыня Морозова|Василий Суриков|Третьяковская галерея, Москва|Закованная в цепи опальная старообрядка на розвальнях посреди московской толпы вскидывает руку с двуперстным крестным знамением.|Нашёл композиционный ключ к картине, увидев чёрную ворону со сломанным крылом на белом снегу.
+RU_PER|W_IMP|1888|Христос и грешница|Василий Поленов|Государственный Русский музей, Санкт-Петербург|У ступеней Иерусалимского храма под ярким южным солнцем Христос останавливает разгневанную толпу с камнями словами: «Кто из вас без греха...».|Главное монументальное полотно Поленова, приобретённое императором Александром III для основы Русского музея.
+RU_PER|W_IMP|1889|Утро в сосновом лесу|Иван Шишкин и Константин Савицкий|Третьяковская галерея, Москва|Четыре медвежонка с медведицей играют на сломанном бурей стволе вековой сосны в окутанной утренним туманом лесной чаще.|Самый узнаваемый и любимый в народе русский лесной пейзаж (медвежат по просьбе Шишкина написал К. Савицкий).
+RU_PER|W_IMP|1889|Иван Царевич на Сером Волке|Виктор Васнецов|Третьяковская галерея, Москва|Могучий серый волк мчит сквозь дремучий сказочный лес с цветущей яблоней царевича и прижавшуюся к нему Елену Прекрасную.|Создал канонические образы русской волшебной сказки («Три царевны подземного царства», «Ковёр-самолёт»).
+RU_PER|W_IMP|1890|Что есть истина? Христос и Пилат|Николай Ге|Третьяковская галерея, Москва|Сытый римский прокуратор в белой тоге небрежно бросает вопрос измождённому узнику, стоящему в глубокой тени.|Поздний экспрессивный шедевр мастера, поразивший Льва Толстого своей нравственной силой.
+RU_PER|W_IMP|1891|Запорожцы пишут письмо турецкому султану|Илья Репин|Государственный Русский музей, Санкт-Петербург|Вокруг войскового писаря громогласно хохочут казаки во главе с атаманом Иваном Сирко, сочиняя дерзкий ответ султану Мехмеду IV.|Работал над этим гимном вольнице и удали более 11 лет, написав этюды с выдающихся современников.
+RU_PER|W_IMP|1891|Взятие снежного городка|Василий Суриков|Государственный Русский музей, Санкт-Петербург|Лихой казак на вороном коне с разбегу прорывается сквозь смеющийся строй защитников с хворостинами и крушит ледяную стену в масленичной забаве.|Единственная жизнерадостная жанровая картина Сурикова, написанная в родном Красноярске.
+RU_PER|W_IMP|1895|Покорение Сибири Ермаком Тимофеевичем|Василий Суриков|Государственный Русский музей, Санкт-Петербург|На крутом берегу Иртыша казачья дружина с ружьями в пороховом дыму на стругах вступает в решающую схватку с воинами хана Кучума.|Эпическое батальное полотно, над которым Суриков работал четыре года, совершив поездку по Сибири и Иртышу.
+RU_PER|W_IMP|1898|Богатыри|Виктор Васнецов|Третьяковская галерея, Москва|Илья Муромец, Добрыня Никитич и Алёша Попович на могучих конях стоят на богатырском заставе на страже Русской земли.|Писал главное полотно своей жизни почти двадцать лет, создав символ несокрушимой защиты Отечества.
+RU_PER|W_IMP|1898|Корабельная роща|Иван Шишкин|Государственный Русский музей, Санкт-Петербург|Залитые полуденным солнцем гигантские вековые сосны Елабужского бора у мелкого прозрачного ручья с песчаным дном.|Последнее и самое монументальное произведение великого певца русского леса.
+RU_PER|W_IMP|1899|Переход Суворова через Альпы|Василий Суриков|Государственный Русский музей, Санкт-Петербург|Русские чудо-богатыри с улыбкой и отвагой скользят вниз по отвесному обледенелому альпийскому склону под взглядом фельдмаршала на коне.|Написал полотно к столетию легендарного Швейцарского похода А. В. Суворова 1799 года.
+RU_MOD|W_IMP|1887|Девочка с персиками|Валентин Серов|Третьяковская галерея, Москва|Юная Вера Мамонтова в розовой кофточке сидит за столом в залитой солнечным светом столовой усадьбы Абрамцево.|Шедевр русского импрессионизма, написанный 22-летним художником и сохранивший вечную свежесть юности.
+RU_MOD|W_IMP|1888|Девушка, освещённая солнцем|Валентин Серов|Третьяковская галерея, Москва|Кузина художника Мария Симонович сидит под старой липой в парке, а сквозь листву на её лице и блузке играют солнечные блики.|Сам автор называл это полотно своей лучшей работой, написанной на одном дыхании.
+RU_MOD|W_IMP|1889|Видение отроку Варфоломею|Михаил Нестеров|Третьяковская галерея, Москва|Хрупкий деревенский мальчик молитвенно сложил руки перед святым старцем под осенними берёзками среднерусской долины.|Первая картина знаменитого цикла, посвящённого житию преподобного Сергия Радонежского.
+RU_MOD|W_MOD|1890|Демон сидящий|Михаил Врубель|Третьяковская галерея, Москва|Крылатый дух с тоскливым взглядом обхватил руками колени на вершине скалы среди кристаллических каменных цветов на закате.|Гений русского символизма и модерна, разработавший уникальную «кристаллическую» гранёную технику мазка.
+RU_MOD|W_IMP|1892|Владимирка|Исаак Левитан|Третьяковская галерея, Москва|Уходящий за горизонт под низким пасмурным небом бесконечный грунтовый тракт с придорожным голубцом, по которому веками гнали в Сибирь каторжан.|Глубокий социально-философский пейзаж Левитана, без единой фигуры рассказавший о народном страдании.
+RU_MOD|W_IMP|1894|Над вечным покоем|Исаак Левитан|Третьяковская галерея, Москва|Крошечная деревянная церквушка с погостом на мысе перед безбрежной водной гладью и величественными грозовыми тучами.|Вершина философского русского пейзажа («В ней весь я, со всей моей психикой», — писал Левитан Третьякову).
+RU_MOD|W_IMP|1895|Золотая осень|Исаак Левитан|Третьяковская галерея, Москва|Сияющая багряно-золотая берёзовая роща вдоль крутого изгиба ярко-синей речки под чистым осенним небом.|Праздничный гимн русской природе и эталон колористического мастерства Левитана.
+RU_MOD|W_IMP|1895|Март|Исаак Левитан|Третьяковская галерея, Москва|У жёлтого деревянного крыльца в ярких лучах весеннего солнца дремлет запряжённая в розвальни лошадка, а на белом снегу лежат голубые тени сосен.|Один из самых светлых и радостных русских весенних пейзажей.
+RU_MOD|W_MOD|1899|Пан|Михаил Врубель|Третьяковская галерея, Москва|Добродушный морщинистый лесной полубог с голубыми глазами и свирелью в руке сидит на пне на фоне болотной равнины и восходящего красного серпа луны.|Написал этот сказочный образ всего за один день в имении княгини Тенишевой под впечатлением рассказа Анатоля Франса.
+RU_MOD|W_MOD|1900|Царевна-Лебедь|Михаил Врубель|Третьяковская галерея, Москва|Дева-птица с огромными печальными глазами и жемчужным кокошником оборачивается в сумерках на берегу моря, превращаясь из лебедя в царевну.|Вдохновлён оперой Римского-Корсакова «Сказка о царе Салтане», где партию Лебеди пела жена художника Надежда Забела.
+RU_MOD|W_MOD|1901|Заморские гости|Николай Рерих|Третьяковская галерея, Москва|Яркие расписные варяжские ладьи с красными парусами и щитами скользят по синей воде мимо зелёных холмов и белокаменного града в сопровождении чаек.|Великий художник, археолог, путешественник и мыслитель, воспевший Древнюю Русь и вершины Гималаев.
+RU_MOD|W_MOD|1914|Парижское кафе|Константин Коровин|Третьяковская галерея, Москва|Залитый разноцветными огнями вечерних фонарей и витрин оживлённый парижский бульвар со столиками кафе, экипажами и нарядной публикой.|Главный мастер русского импрессионизма и театрально-декорационного искусства Серебряного века.
+RU_MOD|W_MOD|1916|Масленица|Борис Кустодиев|Государственный Русский музей, Санкт-Петербург|По заснеженным холмам среди церквей, ярмарочных балаганов и каруселей мчатся расписные тройки с бубенцами в морозном солнечном мареве.|Праздничная панорама народного гулянья, ставшая визитной карточкой Кустодиева.
+RU_MOD|W_MOD|1918|Купчиха за чаем|Борис Кустодиев|Государственный Русский музей, Санкт-Петербург|Пышнотелая красавица пьёт чай из блюдца на террасе рядом с самоваром, арбузом и котом на фоне куполов старого русского города.|Создал этот яркий праздник купеческой Руси в голодном 1918 году, будучи прикованным к креслу.
+RU_AVN|W_MOD|1913|Композиция VII|Василий Кандинский|Третьяковская галерея, Москва|Грандиозный вихрь цветовых пятен, линий и ритмических волн, воплощающий тему Потопа, Страшного суда и Воскресения.|Основоположник мирового абстракционизма, считавший эту картину вершиной своего творчества.
+RU_AVN|W_MOD|1915|Чёрный супрематический квадрат|Казимир Малевич|Третьяковская галерея, Москва|Абсолютный геометрический манифест беспредметного искусства, вывешенный в «красном углу» на выставке «0,10» в Петрограде.|Создатель супрематизма, перевернувший мировую архитектуру, графику и дизайн XX столетия.
+RU_AVN|W_MOD|1918|Над городом|Марк Шагал|Третьяковская галерея, Москва|Влюблённые — сам художник и его жена Белла — обнявшись, счастливо парят в небе над деревянными домиками и заборами родного Витебска.|Поэт авангарда XX века, соединивший лирический полёт мечты с красками народного искусства.
+RU_AVN|W_MOD|1920|Большевик|Борис Кустодиев|Третьяковская галерея, Москва|Гигантская фигура рабочего с развевающимся во всё небо алым стягом шагает поверх многолюдных московских улиц и церквей.|Монументальная символическая аллегория революционной стихии.
+RU_AVN|W_MOD|1923|Композиция VIII|Василий Кандинский|Музей Соломона Гуггенхайма, Нью-Йорк|Строгая геометрическая симфония из кругов, треугольников, шахматных сеток и лучей в светлом космическом пространстве.|Создана в период преподавания мастера в знаменитой немецкой архитектурно-художественной школе Баухаус.
+RU_AVN|W_MOD|1932|Скачет красная конница|Казимир Малевич|Государственный Русский музей, Санкт-Петербург|По бескрайней равнине, разделённой на двенадцать ярких цветных полос под синим небом, стремительно мчатся три группы красных всадников.|Единственная картина позднего Малевича, официально признанная и вошедшая во все советские учебники.
+RU_AVN|W_MOD|1937|Новая Москва|Юрий Пименов|Третьяковская галерея, Москва|Молодая женщина за рулём открытого автомобиля едет по обновлённой после реконструкции площади Свердлова и Охотному ряду в утренней дымке.|Поэтический символ городской жизни 1930-х годов, соединивший традиции импрессионизма с новой эпохой.
+RU_AVN|W_MOD|1942|Оборона Севастополя|Александр Дейнека|Государственный Русский музей, Санкт-Петербург|На фоне пылающего ночного неба и рушащихся набережных черноморский моряк в белой тельняшке в яростном броске заносит связку гранат на немецкие штыки.|Самое мощное и экспрессивное полотно советской живописи периода Великой Отечественной войны.
+RU_AVN|W_MOD|1952|Опять двойка|Фёдор Решетников|Третьяковская галерея, Москва|Понурый школьник с коньками в перевязанном портфеле возвращается домой, где его с укором встречают мама и сестра, и только верный пёс радостно бросается на грудь.|Самая знаменитая бытовая картина послевоенного советского искусства, знакомая каждому школьнику по учебникам.
+`;
+
+    // 2. ЗАРУБЕЖНЫЕ ШЕДЕВРЫ В МИРОВОМ ТОПЕ (92 ВЕЛИЧАЙШИЕ КАРТИНЫ МИРА — 0% НЮ)
+    const RAW_FOREIGN_IN_TOP = `
+W_REN|1305|Поцелуй Иуды|Джотто ди Бондоне|Капелла Скровеньи, Падуя|В плотном кольце факелов и копий Иуда укрывает Христа жёлтым плащом, встречаясь с Ним неотрывным пронзительным взглядом.|Предтеча итальянского Возрождения (Проторенессанс), впервые вернувший в живопись трёхмерный объём и живые человеческие чувства.
+W_REN|1427|Троица|Мазаччо|Базилика Санта-Мария-Новелла, Флоренция|Первая в истории европейской живописи фреска, построенная по точным математическим законам прямой линейной перспективы.|Реформатор Раннего Возрождения во Флоренции, проживший всего 26 лет.
+W_REN|1432|Гентский алтарь (Поклонение Агнцу)|Ян и Губерт ван Эйки|Собор Святого Бавона, Гент|Многостворчатый полиптих, где в центре на изумрудном лугу со всех концов земли сходятся праведники к жертвенному Агнцу.|Монументальная вершина Северного Возрождения и ранней нидерландской масляной живописи.
+W_REN|1434|Портрет четы Арнольфини|Ян ван Эйк|Национальная галерея, Лондон|Купец и его жена в зелёном платье соединили руки в спальне, а в круглом выпуклом зеркале на стене отражается сам входящий художник.|Над зеркалом автор оставил каллиграфическую латинскую надпись: «Ян ван Эйк был здесь. 1434».
+W_REN|1435|Снятие с креста|Рогир ван дер Вейден|Музей Прадо, Мадрид|В золочёном коробе алтаря фигуры Христа и падающей в обморок Девы Марии повторяют пластику друг друга в безмолвной скорби.|Крупнейший мастер эмоционального драматизма нидерландской школы XV века.
+W_REN|1456|Битва при Сан-Романо|Паоло Уччелло|Национальная галерея, Лондон / Уффици / Лувр|Всадники в латах на игрушечно-объёмных конях скрестили длинные пики, разложенные по сетке геометрической перспективы.|Флорентийский живописец-математик, говоривший: «Как же сладостна эта перспектива!».
+W_REN|1465|Диптих герцогов Урбинских|Пьеро делла Франческа|Галерея Уффици, Флоренция|Строгие профильные портреты кондотьера Федериго да Монтефельтро с перебитым на турнире носом и его супруги Баттисты Сфорца на фоне холмов Умбрии.|Гений светлой перспективы и геометрии итальянского Кватроченто.
+W_REN|1478|Мадонна Бенуа (Мадонна с цветком)|Леонардо да Винчи|Государственный Эрмитаж, Санкт-Петербург|Юная улыбающаяся Мария с косами в полутёмной комнате протягивает младенцу маленький четырёхлистный цветок крестоцвета.|Ранний шедевр 26-летнего Леонардо, ставший гордостью коллекции петербургского Эрмитажа.
+W_REN|1480|Мёртвый Христос|Андреа Мантенья|Пинакотека Брера, Милан|Тело Спасителя на каменном ложе показано в ошеломляюще резком перспективном ракурсе со стороны пробитых гвоздями стоп.|Североитальянский мастер чеканного рисунка и смелых пространственных иллюзий.
+W_REN|1482|Весна (Примавера)|Сандро Боттичелли|Галерея Уффици, Флоренция|В тени апельсинового сада Венеры танцуют три Грации, Меркурий разгоняет облака, а Флора рассыпает весенние цветы.|Поэтический символ флорентийского Раннего Возрождения эпохи Лоренцо Медичи Великолепного.
+W_REN|1489|Дама с горностаем|Леонардо да Винчи|Национальный музей, Краков|Юная Чечилия Галлерани, возлюбленная миланского герцога Лодовико Сфорца, грациозно обернулась через плечо, гладя белого зверька.|Шедевр психологического портрета, в котором горностай служит геральдическим символом чистоты и самого герцога Милана.
+W_REN|1490|Мадонна Литта|Леонардо да Винчи|Государственный Эрмитаж, Санкт-Петербург|Богоматерь в синем плаще нежно держит на руках Младенца с маленьким щеглом в ладони на фоне двух симметричных арочных окон с голубыми горами.|Один из двух живописных шедевров школы Леонардо да Винчи, хранящихся в России.
+W_REN|1498|Тайная вечеря|Леонардо да Винчи|Санта-Мария-делле-Грацие, Милан|Двенадцать апостолов в смятении разбились на четыре группы по трое в миг, когда Христос произносит: «Один из вас предаст Меня».|Кульминация Высокого Возрождения, где перспектива зала сходится ровно в точке за головой Христа.
+W_REN|1500|Автопортрет в образе Христа (в меховом пальто)|Альбрехт Дюрер|Старая пинакотека, Мюнхен|Двадцативосьмилетний художник смотрит прямо на зрителя в строго фронтальной иконографической позе с длинными золотистыми локонами.|Крупнейший живописец и гравёр немецкого Возрождения, утвердивший высокий статус художника-творца.
+W_REN|1503|Мона Лиза (Джоконда)|Леонардо да Винчи|Музей Лувр, Париж|Портрет Лизы Герардини с неуловимой улыбкой, написанный в дымчатой световоздушной технике сфумато на фоне фантастических скал.|Самая знаменитая картина в мировой истории, которую Леонардо не расставаясь возил с собой до конца жизни во Францию.
+W_REN|1508|Мадонна в скалах|Леонардо да Винчи|Музей Лувр, Париж / Национальная галерея, Лондон|В таинственном полумраке каменного грота Дева Мария, младенец Христос, юный Иоанн Креститель и ангел образуют строгую пирамидальную группу.|Образец классической пирамидальной композиции и мягкого сфумато Леонардо.
+W_REN|1511|Афинская школа|Рафаэль Санти|Апостольский дворец, Ватикан|Под сводами античного храма беседуют Платон (с лицом Леонардо) и Аристотель в окружении Пифагора, Евклида, Диогена и Гераклита (Микеланджело).|Воплощение гуманистического идеала гармонии веры, философии и науки Высокого Возрождения.
+W_REN|1512|Сотворение Адама|Микеланджело Буонарроти|Сикстинская капелла, Ватикан|Бог-Отец в летящем плаще в окружении ангелов протягивает руку к первому человеку, передавая ему божественную искру жизни.|Центральная фреска свода Сикстинской капеллы, который скульптор и живописец расписал в одиночку за четыре года.
+W_REN|1513|Сикстинская Мадонна|Рафаэль Санти|Галерея старых мастеров, Дрезден|Босоногая Дева Мария с Младенцем сходит по облакам мимо зелёных занавесей, а внизу задумчиво облокотились два маленьких крылатых ангелочка.|Вершина творчества Рафаэля, созданная для алтаря монастыря Святого Сикста в Пьяченце.
+W_REN|1514|Меняла с женой|Квентин Массейс|Музей Лувр, Париж|Ростовщик за прилавком сосредоточенно взвешивает золотые монеты, а его жена невольно отвлекается от чтения иллюстрированного часослова на блеск золота.|Классика нидерландского Возрождения с выпуклым зеркалом на столе, продолжающая традицию Яна ван Эйка.
+W_REN|1515|Изенгеймский алтарь|Маттиас Грюневальд|Музей Унтерлинден, Кольмар|Потрясающее своей трагической экспрессией Распятие на тёмном фоне и ослепительное радужное Воскресение Христа.|Самый пронзительный памятник немецкой религиозной живописи эпохи поздней готики и Ренессанса.
+W_REN|1523|Вакх и Ариадна|Тициан Вечеллио|Национальная галерея, Лондон|Бог вина в порыве страсти выпрыгивает из запряжённой гепардами колесницы навстречу покинутой Тесеем царевне на берегу Наксоса.|Шедевр динамики и сияющего лазуритового цвета венецианской школы.
+W_REN|1533|Послы|Ганс Гольбейн Младший|Национальная галерея, Лондон|Два французских дипломата стоят у этажерки с глобусами и лютней с лопнувшей струной, а внизу на полу диагонально растянут анаморфотный череп.|Придворный портретист английского короля Генриха VIII, спрятавший в картине оптический символ бренности бытия (Memento mori).
+W_REN|1534|Пармская Мадонна (Мадонна с длинной шеей)|Пармиджанино|Галерея Уффици, Флоренция|Грациозно вытянутая фигура Мадонны с огромным спящим Младенцем на коленях на фоне крошечной фигуры пророка у незавершённой колоннады.|Эталон итальянского маньеризма XVI века, ставившего утончённую прихотливость линий выше классических пропорций.
+W_REN|1541|Страшный суд|Микеланджело Буонарроти|Сикстинская капелла, Ватикан|Грандиозная стена за алтарём, где вокруг грозного Христа-Судии при звуках труб кружится водоворот восстающих праведников и низвергаемых грешников.|На содранной коже святого Варфоломея Микеланджело запечатлел собственный трагический автопортрет.
+W_REN|1563|Вавилонская башня|Питер Брейгель Старший|Музей истории искусств, Вена|Колоссальное недостроенное спиральное здание, напоминающее римский Колизей, упирается вершиной в облака над гаванью и царём Нимродом.|Великий нидерландский философ с кистью, показавший тщетность человеческой гордыни.
+W_REN|1563|Брак в Кане Галилейской|Паоло Веронезе|Музей Лувр, Париж|Шумный многолюдный пир со 130 фигурами в декорациях ренессансной Венеции, где музыканты на переднем плане имеют лица Тициана, Тинторетто и самого автора.|Самое большое по размеру полотно в коллекции парижского Лувра (почти 70 квадратных метров).
+W_REN|1565|Охотники на снегу (Зима)|Питер Брейгель Старший|Музей истории искусств, Вена|Усталые охотники с гончими собаками спускаются с холма к заснеженной долине, где крестьяне катаются на коньках по замёрзшим прудам.|Часть цикла «Времена года», впервые превратившая зимний пейзаж в космическую панораму человеческого бытия.
+W_REN|1568|Крестьянская свадьба|Питер Брейгель Старший|Музей истории искусств, Вена|В большом гумне со снопами соломы за длинным столом пируют гости, разносчики несут кашу на снятой с петель двери, а волынщик жадно косится на еду.|Жизнерадостная энциклопедия народных обычаев и типов фламандской деревни XVI века.
+W_REN|1568|Притча о слепых|Питер Брейгель Старший|Музей Каподимонте, Неаполь|Цепочка из шести незрячих странников, держащихся друг за друга, неминуемо падает вслед за поводырём в придорожный овраг.|Поздний трагический шедевр мастера на евангельские слова: «Если слепой ведёт слепого, то оба упадут в яму».
+W_REN|1586|Погребение графа Оргаса|Эль Греко (Доменикос Теотокопулос)|Церковь Санто-Томе, Толедо|Внизу святые Стефан и Августин опускают рыцаря в гробницу в окружении идальго в чёрном, а вверху его душу встречают небеса.|Грек с острова Крит, нашедший вторую родину в испанском Толедо и ставший предтечей экспрессионизма XX века.
+W_REN|1594|Тайная вечеря|Якопо Тинторетто|Базилика Сан-Джорджо-Маджоре, Венеция|Стремительно уходящий вглубь стол озарён мистическим светом лампад, дым которых превращается в призрачные фигуры парящих ангелов.|Последний великий титан венецианского Возрождения, прозванный за темперамент «Бешеным» (Il Furioso).
+W_BAR|1597|Вакх|Микеланджело Меризи да Караваджо|Галерея Уффици, Флоренция|Юный бог виноделия в венке из виноградных листьев протягивает зрителю плоский стеклянный бокал с дрожащим тёмным вином.|Реформатор европейской живописи рубежа XVI–XVII веков, отказавшийся от идеализации ради суровой жизненной правды.
+W_BAR|1599|Юдифь и Олоферн|Микеланджело Меризи да Караваджо|Национальная галерея старинного искусства (Палаццо Барберини), Рим|Решительная библейская вдова с нахмуренными бровями мечом обезглавливает ассирийского полководца в багровом шатре рядом со старой служанкой.|Мастер драматического «погребного света» (тенебризма), выхватывающего сцену из густого мрака.
+W_BAR|1600|Призвание апостола Матфея|Микеланджело Меризи да Караваджо|Церковь Сан-Луиджи-деи-Франчези, Рим|Резкий диагональный луч света в полутёмной комнате выхватывает из мрака сборщика податей за столом с монетами, на которого указывает рука Христа.|Жест руки Христа на картине сознательно повторяет жест Адама с фрески Микеланджело в Сикстинской капелле.
+W_BAR|1608|Зимний пейзаж с конькобежцами|Хендрик Аверкамп|Рейксмюсеум, Амстердам|На замёрзшей голландской реке у деревушки и церкви десятки горожан и крестьян катаются на коньках, играют в клюшки и едут в санях.|Глухонемой мастер («Немой из Кампена»), создавший классический жанр голландского зимнего пейзажа Золотого века.
+W_BAR|1610|Воздвижение креста|Питер Пауль Рубенс|Собор Богоматери, Антверпен|Могучие мускулистые палачи с колоссальным напряжением поднимают диагональный крест со Спасителем.|Король фламандского барокко и дипломат, прославившийся бурной динамикой и жизнелюбивой мощью форм.
+W_BAR|1612|Юдифь, обезглавливающая Олоферна|Артемизия Джентилески|Галерея Уффици, Флоренция|Две сильные женщины в лучах бокового света безжалостно удерживают и казнят вражеского полководца на ложе.|Выдающаяся художница итальянского барокко и последовательница Караваджо, первая женщина-член Флорентийской академии.
+W_BAR|1624|Смеющийся кавалер|Франс Халс|Собрание Уоллеса, Лондон|Щёгольски одетый офицер в широкополой чёрной шляпе, кружевном воротнике и вышитом камзоле смотрит свысока с лукавой полуулыбкой и закрученными усами.|Виртуоз свободного темпераментного мазка голландского портрета XVII века.
+W_BAR|1630|Сдача Бреды (Копья)|Диего Веласкес|Музей Прадо, Мадрид|На фоне дымящихся полей и частокола копий испанский полководец Спинола благородно кладёт руку на плечо побеждённого голландца Юстина Нассау.|Величайший испанский живописец Золотого века, показавший величие великодушия к достойному противнику.
+W_BAR|1632|Урок анатомии доктора Тульпа|Рембрандт Харменс ван Рейн|Маурицхёйс, Гаага|Хирург в чёрной шляпе пинцетом демонстрирует сухожилия руки окружившим стол врачам амстердамской гильдии.|Картина, принесшая 26-летнему Рембрандту славу первого портретиста Амстердама.
+W_BAR|1635|Автопортрет с Саскией на коленях (Блудный сын в таверне)|Рембрандт Харменс ван Рейн|Галерея старых мастеров, Дрезден|Счастливый художник в берете с пером усаживает на колени молодую жену Саскию и высоко поднимает хрустальный бокал за здоровье зрителей.|Гимн семейного счастья и достатка молодого Рембрандта в Амстердаме.
+W_BAR|1638|Аркадские пастухи (Et in Arcadia ego)|Никола Пуссен|Музей Лувр, Париж|Три античных пастуха и дева в солнечной Аркадии задумчиво склонились над каменной гробницей, разбирая высеченную надпись: «И я был в Аркадии».|Основоположник французского классицизма XVII века, превыше всего ценивший ясность разума и благородную меру.
+W_BAR|1642|Ночной дозор|Рембрандт Харменс ван Рейн|Рейксмюсеум, Амстердам|Стрелковая рота капитана Франса Баннинга Кока и лейтенанта ван Рёйтенбюрга под бой барабанов выступает из арки в золотых вспышках света.|Превратил традиционный групповой портрет голландских бюргеров в грандиозное театральное действие.
+W_BAR|1650|Портрет папы Иннокентия X|Диего Веласкес|Галерея Дориа-Памфили, Рим|Понтифик в багровой бархатной накидке и белом стихаре сидит на золочёном троне, буравя зрителя острым подозрительным взглядом.|Увидев готовый портрет, сам папа воскликнул: «Слишком правдиво!».
+W_BAR|1656|Менины (Фрейлины)|Диего Веласкес|Музей Прадо, Мадрид|Маленькая инфанта Маргарита стоит в окружении фрейлин и карликов, а слева сам Веласкес с кистью смотрит на короля и королеву, отражающихся в зеркале.|Философская вершина барокко, где зритель оказывается ровно на месте позирующей королевской четы.
+W_BAR|1658|Молочница|Ян Вермеер|Рейксмюсеум, Амстердам|В залитой утренним светом из окна кухне служанка в жёлтом лифе и синем фартуке сосредоточенно наливает молоко из глиняного кувшина.|Мастер поэзии повседневного быта и драгоценной ультрамариново-лимонной палитры Делфта.
+W_BAR|1660|Вид Делфта|Ян Вермеер|Маурицхёйс, Гаага|Панорама родного города художника за зеркальной гладью канала под высокими голландскими облаками, где солнечный луч освещает черепичные крыши.|Марсель Пруст называл этот городской пейзаж «самой прекрасной картиной в мире».
+W_BAR|1665|Девушка с жемчужной серёжкой|Ян Вермеер|Маурицхёйс, Гаага|Юная незнакомка в сине-жёлтом восточном тюрбане обернулась через плечо на тёмном фоне, а в её ухе сияет крупная каплевидная жемчужина.|«Северная Мона Лиза» — вершина голландского жанра «трони» (выразительной головки).
+W_BAR|1666|Аллегория живописи (Мастерская художника)|Ян Вермеер|Музей истории искусств, Вена|В комнате за откинутым гобеленом художник в полосатом камзоле сидит спиной к зрителю, рисуя девушку в лавровом венке с книгой и трубой (музу Истории Клио).|Программное произведение Вермеера, с которым мастер не расставался до самой смерти.
+W_BAR|1668|Астроном|Ян Вермеер|Музей Лувр, Париж|Учёный в японском халате за столом с персидским ковром у светлого окна протягивает руку к небесному глобусу со созвездиями.|Поэтический гимн научным открытиям голландского Золотого века.
+W_BAR|1668|Возвращение блудного сына|Рембрандт Харменс ван Рейн|Государственный Эрмитаж, Санкт-Петербург|Оборванный раскаявшийся сын пал на колени на пороге дома, а ослепший старик-отец в алом плаще бережно возложил руки на его плечи.|Духовное завещание великого голландца, написанное в последний год его жизни.
+W_ROM|1717|Паломничество на остров Киферу|Антуан Ватто|Музей Лувр, Париж|Нарядные кавалеры и дамы в шелковых платьях среди золотистой осенней дымки парка спускаются к золочёной ладье у статуи Венеры.|Родоначальник галантных празднеств французского рококо XVIII века.
+W_ROM|1767|Качели|Жан Оноре Фрагонар|Собрание Уоллеса, Лондон|Кокетливая дама в пышном розовом платье взлетает на качелях в тенистом саду, теряя с ножки туфельку на глазах спрятавшегося в кустах кавалера.|Самый знаменитый и игривый шедевр эпохи французского рококо.
+W_ROM|1770|Голубой мальчик|Томас Гейнсборо|Библиотека Хантингтона, Сан-Марино (Калифорния)|Юноша в сверкающем голубом атласном костюме эпохи Ван Дейка со шляпой с белым страусовым пером в руке стоит на фоне грозового английского пейзажа.|Вершина английского аристократического портрета XVIII столетия.
+W_ROM|1784|Клятва Горациев|Жак-Луи Давид|Музей Лувр, Париж|Трое братьев-римлян в едином порыве вскидывают руки в клятве перед отцом, протягивающим им три боевых меча.|Манифест французского неоклассицизма, провозгласивший гражданский долг выше личных чувств накануне революции.
+W_ROM|1793|Смерть Марата|Жак-Луи Давид|Королевские музеи изящных искусств, Брюссель|Убитый кинжалом Шарлотты Корде трибун Французской революции лежит в ванне с зелёным сукном, всё ещё сжимая в руке перо и записку.|Превратил политическое убийство современника в строгую античную трагедию и революционную «Пьету».
+W_ROM|1801|Бонапарт на перевале Сен-Бернар|Жак-Луи Давид|Дворец Мальмезон / Версаль, Франция|Первый консул в развевающемся плаще на вздыбленном коне указывает рукой к вершинам Альп, а на камнях высечены имена Ганнибала и Карла Великого.|Канонический героический образ Наполеона, ставший главным символом эпохи ампира.
+W_ROM|1807|Коронация Наполеона|Жак-Луи Давид|Музей Лувр, Париж|В соборе Парижской Богоматери в присутствии папы Пия VII император в лавровом венке сам возлагает корону на склонившуюся перед ним Жозефину.|Грандиозное полотно размером почти 10 на 6 метров, запечатлевшее более 150 исторических лиц эпохи.
+W_ROM|1814|Третье мая 1808 года в Мадриде|Франсиско Гойя|Музей Прадо, Мадрид|Ночью в резком свете квадратного фонаря шеренга наполеоновских солдат расстреливает испанских повстанцев, в центре которых человек в белой рубахе вскинул руки.|Первая в истории живописи антивоенная картина, лишённая парадного героизма.
+W_ROM|1818|Странник над морем тумана|Каспар Давид Фридрих|Кунстхалле, Гамбург|Одинокий мужчина в тёмном сюртуке стоит спиной к зрителю на скалистом пике, всматриваясь в бушующее под ногами море облаков.|Вершина немецкого романтизма, воплотившая тему возвышенного одиночества человека перед бесконечностью природы.
+W_ROM|1819|Плот «Медузы»|Теодор Жерико|Музей Лувр, Париж|На тонущем деревянном плоту среди штормовых волн измождённые выжившие после кораблекрушения отчаянно машут платками кораблю на горизонте.|Программное полотно французского романтизма, основанное на реальной морской катастрофе у берегов Сенегала.
+W_ROM|1821|Телега для сена|Джон Констебл|Национальная галерея, Лондон|Крестьянская повозка переезжает неглубокую речку Стур у старой водяной мельницы под живым облачным небом английского графства Саффолк.|Реформатор европейского пейзажа, чьи этюды облаков и зелени восхитили французских романтиков и импрессионистов.
+W_ROM|1823|Сатурн, пожирающий своего сына|Франсиско Гойя|Музей Прадо, Мадрид|Из непроглядной тьмы выступает безумный седой титан с широко раскрытыми от страха глазами, терзающий собственного ребёнка.|Самая знаменитая из четырнадцати «Мрачных картин», написанных оглохшим Гойей прямо на стенах своего «Дома глухого».
+W_ROM|1831|Большая волна в Канагаве|Кацусика Хокусай|Метрополитен-музей, Нью-Йорк / Токио|Гигантский пенный гребень океанской волны с когтями нависает над тремя лодками, а вдали возвышается заснеженная вершина Фудзи.|Первый лист серии «Тридцать шесть видов Фудзи», ставший самым узнаваемым произведением искусства Азии.
+W_ROM|1839|Последний рейс корабля «Отважный»|Уильям Тёрнер|Национальная галерея, Лондон|Чёрный паровой буксир тянет на слом белый призрачный парусный линкор Трафальгарской битвы на фоне пылающего золотисто-алого заката.|Английский гений света и воздушной стихии, предвосхитивший открытия импрессионистов.
+W_ROM|1844|Дождь, пар и скорость|Уильям Тёрнер|Национальная галерея, Лондон|Сквозь золотисто-серебристую пелену ливня и клубы дыма прямо на зрителя по железнодорожному мосту через Темзу мчится чёрный паровоз.|Первое в мировой живописи поэтическое воплощение индустриальной скорости железных дорог.
+W_ROM|1852|Офелия|Джон Эверетт Милле|Галерея Тейт Британ, Лондон|Героиня трагедии Шекспира с венком полевых цветов в руках медленно погружается в прозрачный лесной ручей среди кувшинок и плакучих ив.|Визитная карточка английского «Братства прерафаэлитов», выписанная с ботанической точностью с натуры.
+W_IMP|1857|Сборщицы колосьев|Жан-Франсуа Милле|Музей Орсе, Париж|Три крестьянки в платках низко склонились над сжатым полем под золотистым закатным солнцем, подбирая оставшиеся после жатвы колоски.|Мастер барбизонской школы и реализма, наделивший тяжёлый крестьянский труд библейским величием.
+W_IMP|1871|Мать Уистлера (Аранжировка в сером и чёрном № 1)|Джеймс Макнейл Уистлер|Музей Орсе, Париж|Пожилая дама в белом чепце и строгом чёрном платье неподвижно сидит в профиль на стуле у серой стены с гравюрой.|Американско-английский мастер тончайших тональных гармоний, ставший главной иконой американского искусства за рубежом.
+W_IMP|1872|Впечатление. Восходящее солнце|Клод Моне|Музей Мармоттан-Моне, Париж|Ярко-оранжевый диск солнца сквозь голубовато-сизую утреннюю дымку гавани Гавра отражается быстрыми мазками на воде рядом с лодками.|Картина, давшая на первой выставке 1874 года название всему движению импрессионизма.
+W_IMP|1873|Дама с зонтиком (Мадам Моне с сыном)|Клод Моне|Национальная галерея искусства, Вашингтон|Камилла Моне в белом платье с зелёным зонтиком от солнца стоит на вершине ветреного лугового холма на фоне бегущих облаков.|Эталон пленэрного импрессионизма, передающий движение ветра и солнечного света.
+W_IMP|1874|Танцевальный класс (Голубые танцовщицы)|Эдгар Дега|Музей Орсе, Париж / ГМИИ им. А. С. Пушкина, Москва|Юные балерины в воздушных пачках репетируют движения под руководством старого балетмейстера Жюля Перро, опирающегося на длинную трость.|Мастер мгновенного «фотографического» кадра, пастели и закулисной жизни парижской Оперы.
+W_IMP|1876|Бал в Мулен де ла Галетт|Пьер Огюст Ренуар|Музей Орсе, Париж|Сквозь листву акаций на Монмартре трепещут солнечные пятна на лицах и платьях кружащихся в танце пар и друзей художника за столиками.|Самое радостное и солнечное полотно французского импрессионизма.
+W_IMP|1877|Вокзал Сен-Лазар|Клод Моне|Музей Орсе, Париж|Под высоким ажурным чугунно-стеклянным дебаркадером парижского вокзала клубится сизо-розовый паровозный пар, пронизанный солнечным светом.|Серия из двенадцати картин, превратившая индустриальный вокзал в храм света и воздуха.
+W_IMP|1881|Завтрак гребцов|Пьер Огюст Ренуар|Коллекция Филлипса, Вашингтон|На залитой солнцем террасе ресторана Фурнез над Сеной в Шату отдыхают друзья художника, а на переднем плане девушка в шляпке играет с маленькой собачкой.|Соединил портрет, натюрморт и речной пейзаж в единой сверкающей симфонии света.
+W_IMP|1882|Бар в «Фоли-Бержер»|Эдуард Мане|Институт искусства Курто, Лондон|Печальная барменша Сюзон стоит за мраморной стойкой с бутылками шампанского перед огромным зеркалом, в котором отражается шумный зал варьете.|Последний великий шедевр Эдуарда Мане со смещённой загадочной перспективой зеркального отражения.
+W_IMP|1883|Зонтики|Пьер Огюст Ренуар|Национальная галерея, Лондон|На оживлённой парижской улице в начале дождя над головами прохожих раскрывается целый купол синих и серо-лиловых зонтиков, а молодая модистка с корзинкой смотрит прямо на зрителя.|Уникальное полотно, которое Ренуар писал в два приёма с разницей в пять лет.
+W_IMP|1884|Воскресный день на острове Гранд-Жатт|Жорж Сёра|Чикагский институт искусств|На зелёном берегу Сены застыли нарядные парижане с зонтиками, собачками и ручной обезьянкой, полностью сотканные из тысяч мельчайших цветных точек.|Основоположник неоимпрессионизма (пуантилизма / дивизионизма), заменивший смешение красок на палитре оптическим смешением точек на сетчатке глаза.
+W_IMP|1885|Едоки картофеля|Винсент ван Гог|Музей Ван Гога, Амстердам|В бедной хижине под тусклым светом керосиновой лампы пятеро крестьян с узловатыми натруженными руками делят скромный ужин из одного блюда.|Первый крупный шедевр голландского периода Ван Гога, написанный в цветах свежевыкопанной земли.
+W_IMP|1888|Подсолнухи|Винсент ван Гог|Национальная галерея, Лондон|Пятнадцать пылающих золотисто-жёлтых цветов в глиняном горшке на жёлтом фоне, написанные густыми рельефными пастозными мазками.|Создал цикл в южнофранцузском Арле, чтобы украсить мастерскую «Жёлтого дома» к приезду Поля Гогена.
+W_IMP|1888|Ночная терраса кафе|Винсент ван Гог|Музей Крёллер-Мюллер, Оттерло|Под ярко-жёлтым навесом уличного кафе на площади Форума в Арле сидят полуночники под глубоким синим небом с крупными созвездиями.|Первая картина, на которой Ван Гог изобразил своё фирменное вибрирующее звёздное небо без единой капли чёрной краски.
+W_IMP|1888|Спальня в Арле|Винсент ван Гог|Музей Ван Гога, Амстердам|Уютная комната художника с деревянной кроватью, двумя жёлтыми стульями, синими стенами и картинами, написанная в экспрессивной наклонной перспективе.|Задумана автором как цветовой гимн абсолютного покоя и отдыха.
+W_IMP|1888|Красные виноградники в Арле|Винсент ван Гог|ГМИИ им. А. С. Пушкина, Москва|Под ослепительным закатным солнцем Прованса крестьянки в синих блузах собирают урожай среди пылающих багряно-пурпурных виноградных лоз.|Единственная картина Ван Гога, официально проданная на выставке при его жизни (теперь хранится в Москве).
+W_IMP|1889|Звёздная ночь|Винсент ван Гог|Музей современного искусства (MoMA), Нью-Йорк|Гигантские вихри ночного неба, одиннадцать сияющих светил и оранжевый месяц кружатся над спящим городком Сен-Реми и пламенем тёмного кипариса.|Вершина постимпрессионизма, написанная в приюте Сен-Поль-де-Мозоль по памяти и воображению.
+W_IMP|1889|Автопортрет с перевязанным ухом|Винсент ван Гог|Институт искусства Курто, Лондон|Художник в меховой шапке и зелёном пальто с белой повязкой на ухе смотрит прямо на зрителя на фоне мольберта и японской гравюры.|Драматическое свидетельство кризиса в Арле и несгибаемой воли мастера к живописи.
+W_IMP|1890|Пшеничное поле с воронами|Винсент ван Гог|Музей Ван Гога, Амстердам|Над волнующимся золотым полем пшеницы с тремя расходящимися грунтовыми дорогами под зловещим тёмно-синим грозовым небом взлетает стая чёрных ворон.|Одно из последних драматических полотен, написанных Ван Гогом в Овер-сюр-Уаз в июле 1890 года.
+W_IMP|1895|Игроки в карты|Поль Сезанн|Музей Орсе, Париж|Два сосредоточенных провансальских крестьянина в шляпах молча режутся в карты за деревянным столиком с винной бутылкой.|«Отец современного искусства», научивший живописцев видеть в природе конструкцию шара, конуса и цилиндра.
+W_IMP|1899|Кувшинки (Японский мостик в Живерни)|Клод Моне|Музей Орсе, Париж / Национальная галерея, Лондон|Изогнутый зелёный деревянный мостик перекинут через водный сад художника, сплошь усыпанный розовыми и белыми водяными лилиями.|Посвятил последние тридцать лет жизни саду в Живерни, создав более 250 полотен с кувшинками.
+W_MOD|1893|Крик|Эдвард Мунк|Национальный музей, Осло|Искажённая беззвучным воплем фигура на мосту зажимает уши ладонями под кроваво-огненными волнами закатного неба фьорда Осло.|Икона европейского символизма и экспрессионизма, выразившая тревогу человека индустриальной эпохи.
+W_MOD|1897|Спящая цыганка|Анри Руссо (Таможенник)|Музей современного искусства (MoMA), Нью-Йорк|Под полной луной посреди безмолвной пустыни спит темнокожая странница с мандолиной и кувшином, а над ней застыл зачарованный лев.|Величайший мастер наивного искусства (примитивизма), чьи сновидческие полотна восхищали Пикассо и Аполлинера.
+W_MOD|1903|Старый гитарист|Пабло Пикассо|Чикагский институт искусств|Слепой измождённый старик в лохмотьях, низко склонив голову, играет на коричневой гитаре в холодном монохромном синем полумраке.|Самое пронзительное произведение «голубого периода» молодого Пабло Пикассо.
+W_MOD|1905|Девочка на шаре|Пабло Пикассо|ГМИИ им. А. С. Пушкина, Москва|Хрупкая юная гимнастка балансирует на круглом шаре напротив могучего широкоплечего атлета, сидящего на массивном каменном кубе.|Шедевр «розового периода» Пикассо из московской коллекции Ивана Морозова, построенный на контрасте грации и тяжести.
+W_MOD|1907|Портрет Адели Блох-Бауэр I (Золотая Адель)|Густав Климт|Новая галерея, Нью-Йорк|Светская дама Вены растворяется в ослепительном ковре из листового сусального золота, серебра и древнеегипетских орнаментов с глазами Гора.|Вершина «золотого периода» лидера Венского сецессиона и стиля модерн.
+W_MOD|1908|Поцелуй|Густав Климт|Галерея Бельведер, Вена|Влюблённая пара на краю цветущего обрыва слилась в объятиях под сияющим золотым плащом, украшенным прямоугольными и округлыми узорами.|Самое знаменитое произведение европейского ар-нуво (модерна).
+W_MOD|1908|Красная комната (Гармония в красном)|Анри Матисс|Государственный Эрмитаж, Санкт-Петербург|В ярко-малиновой столовой, где скатерть и обои с синими растительными арабесками сливаются в единую плоскость, женщина раскладывает фрукты в вазе у окна в сад.|Шедевр французского фовизма, созданный Матиссом специально для московского особняка Сергея Щукина.
+W_MOD|1911|Синие кони|Франц Марк|Центр искусств Уокера, Миннеаполис|Три мощных ярко-синих коня с изогнутыми шеями гармонично вписаны в ритм красных, жёлтых и фиолетовых холмов.|Лидер немецкого экспрессионистического объединения «Синий всадник» (вместе с Василием Кандинским).
+W_MOD|1913|Обнажённая, спускающаяся по лестнице № 2|Марсель Дюшан|Художественный музей Филадельфии|Механическое движение шагающей по ступеням фигуры разложено на десятки перекрывающих друг друга геометрических золотисто-охристых граней и плоскостей.|Абстрактная кубистическая хронофотография движения, произведшая фурор на выставке в Нью-Йорке.
+W_MOD|1921|Три музыканта|Пабло Пикассо|Музей современного искусства (MoMA), Нью-Йорк|Пьеро с кларнетом, Арлекин с гитарой и монах с нотами сложены из ярких плоских геометрических аппликаций.|Итоговый шедевр синтетического кубизма Пабло Пикассо.
+W_MOD|1929|Вероломство образов (Это не трубка)|Рене Магритт|Музей искусств округа Лос-Анджелес (LACMA)|Тщательно выписанная курительная трубка на нейтральном фоне сопровождается каллиграфической школьной подписью: «Ceci n'est pas une pipe».|Бельгийский мастер интеллектуального сюрреализма, показавший разницу между предметом и его изображением.
+W_MOD|1930|Американская готика|Грант Вуд|Чикагский институт искусств|Суровый пожилой фермер в очках с трёхзубыми вилами в руке и его дочь в старомодном переднике стоят перед белым деревянным домом с готическим стрельчатым окном.|Главная визуальная икона американского регионализма эпохи Великой депрессии.
+W_MOD|1931|Постоянство памяти (Мягкие часы)|Сальвадор Дали|Музей современного искусства (MoMA), Нью-Йорк|На пустынном берегу мыса Креус в Каталонии три циферблата карманных часов мягко плавятся и стекают с сухой ветви оливы и подиума.|Самый узнаваемый шедевр мирового сюрреализма, вдохновлённый размышлениями об относительности пространства и времени.
+W_MOD|1937|Герника|Пабло Пикассо|Центр искусств королевы Софии, Мадрид|Огромное чёрно-белое кубистическое полотно с рыдающей матерью, быком, раненым конём и павшим воином под резким светом электрической лампы.|Монументальный антифашистский протест против варварской бомбардировки баскского города Герника.
+W_MOD|1939|Две Фриды|Фрида Кало|Музей современного искусства, Мехико|Двойной автопортрет мексиканской художницы в европейском кружевном и традиционном индейском платьях, чьи обнажённые сердца соединены единой артерией.|Символ мексиканского искусства XX века, превратившая личную физическую и душевную боль в пронзительную живопись.
+W_MOD|1942|Полуночники (Ночные ястребы)|Эдвард Хоппер|Чикагский институт искусств|Сквозь огромное панорамное стекло угловой круглосуточной закусочной видны трое молчаливых поздних посетителей и бармен в резком неоновом свете пустынной улицы.|Главный шедевр американского реализма XX века, передающий пронзительное одиночество человека в большом городе.
+W_MOD|1944|Сон, вызванный полётом пчелы вокруг граната, за секунду до пробуждения|Сальвадор Дали|Музей Тиссен-Борнемиса, Мадрид|Над парящей во сне над морской гладью Галой из треснувшего плода граната вырываются два разъярённых тигра и слон на длинных паучьих ногах.|Виртуозная сюрреалистическая иллюстрация теории сновидений Зигмунда Фрейда.
+W_MOD|1948|Мир Кристины|Эндрю Уайет|Музей современного искусства (MoMA), Нью-Йорк|Хрупкая девушка в розовом платье лежит на сухой выжженной траве холма спиной к зрителю, напряжённо глядя вдаль на старый деревянный фермерский дом.|Вершина американского «магического реализма» середины XX столетия.
+W_MOD|1953|Голконда|Рене Магритт|Коллекция Менил, Хьюстон|На фоне голубого неба и домов с красными крышами в воздухе неподвижно висят, словно капли дождя, десятки одинаковых мужчин в чёрных пальто и котелках.|Завораживающая метафора обезличенности современного буржуазного города.
+W_MOD|1954|Империя света|Рене Магритт|Музей современного искусства (MoMA), Нью-Йорк / Брюссель|Тёмная ночная улица с одиноким горящим фонарём у дома и отражением в воде накрыта сверху абсолютно ясным дневным голубым небом с белыми облаками.|Парадоксальное соединение дня и ночи на одном холсте — визитная карточка Магритта.
+W_MOD|1964|Сын человеческий|Рене Магритт|Частное собрание|Мужчина в строгом тёмном пальто, красном галстуке и шляпе-котелке стоит у низкой каменной стены перед морем, а его лицо закрыто висящим в воздухе зелёным яблоком.|Загадочный автопортрет Магритта о том, что каждое видимое явление скрывает за собой нечто невидимое.
+`;
+
+    // РАСПАКОВКА И ГЕНЕРАЦИЯ ЕДИНОГО МИРОВОГО ТОПА (215 КАРТИН, В Т.Ч. 65 РУССКИХ)
+    function buildMasterArtworksDB() {
+      const db = [];
+      let idx = 1;
+
+      RAW_RUSSIAN_IN_TOP.trim().split('\n').filter(Boolean).forEach(line => {
+        const [eraRU, eraWORLD, yearStr, title, artist, museum, plot, bio] = line.split('|').map(s => s.trim());
+        db.push({
+          id: `RU_${idx++}`,
+          isRussian: true,
+          eraRU,
+          eraWORLD,
+          year: parseInt(yearStr, 10),
+          title,
+          artist,
+          museum,
+          plot,
+          bio,
+          colors: PALETTE_PRESETS[eraRU] || ['#3b5998', '#d4a94e', '#1c1817'],
+          macroX: 44 + ((idx * 7) % 16),
+          macroY: 36 + ((idx * 11) % 22),
+          img: CURATED_HD_IMAGES[title] || ''
+        });
+      });
+
+      RAW_FOREIGN_IN_TOP.trim().split('\n').filter(Boolean).forEach(line => {
+        const [eraWORLD, yearStr, title, artist, museum, plot, bio] = line.split('|').map(s => s.trim());
+        db.push({
+          id: `W_${idx++}`,
+          isRussian: false,
+          eraRU: null,
+          eraWORLD,
+          year: parseInt(yearStr, 10),
+          title,
+          artist,
+          museum,
+          plot,
+          bio,
+          colors: PALETTE_PRESETS[eraWORLD] || ['#2d4d7a', '#e8b53b', '#1c1817'],
+          macroX: 44 + ((idx * 7) % 16),
+          macroY: 36 + ((idx * 11) % 22),
+          img: CURATED_HD_IMAGES[title] || ''
+        });
+      });
+
+      return db;
+    }
+
+    const ARTWORKS_DB = buildMasterArtworksDB();
+
+    // ==========================================
+    // АВТОМАТИЧЕСКИЙ ЗАГРУЗЧИК НАСТОЯЩИХ РЕПРОДУКЦИЙ ВСЕХ 144 КАРТИН
+    // (Обходит блокировки хотлинкинга через официальный API Wikipedia + no-referrer)
+    // ==========================================
+    const WIKI_IMAGE_CACHE = {};
+
+    const WIKI_EXACT_TITLES = {
+      'Богоматерь Владимирская': 'Владимирская икона Божией Матери',
+      'Ангел Златые Власы': 'Ангел Златые Власы',
+      'Донская икона Божией Матери': 'Донская икона Божией Матери',
+      'Спас в Силах': 'Спас в Силах',
+      'Троица': 'Троица (икона Рублёва)',
+      'Распятие': 'Распятие (икона Дионисия)',
+      'Спас Нерукотворный': 'Спас Нерукотворный (икона Симона Ушакова)',
+      'Насаждение древа Государства Российского': 'Насаждение древа государства Российского',
+      'Смолянки (Портрет Хованской и Хрущовой)': 'Смолянки',
+      'Портрет А. П. Струйской': 'Портрет А. П. Струйской',
+      'Портрет М. И. Лопухиной': 'Портрет М. И. Лопухиной',
+      'На пашне. Весна': 'На пашне. Весна',
+      'Кружевница': 'Кружевница (картина Тропинина)',
+      'Портрет А. С. Пушкина': 'Портрет А. С. Пушкина (Кипренский)',
+      'Итальянский полдень': 'Итальянский полдень',
+      'Всадница': 'Всадница (картина)',
+      'Последний день Помпеи': 'Последний день Помпеи',
+      'Медный змий': 'Медный змий (картина)',
+      'Девятый вал': 'Девятый вал',
+      'Явление Христа народу': 'Явление Христа народу',
+      'Среди волн': 'Среди волн',
+      'Сватовство майора': 'Сватовство майора',
+      'Неравный брак': 'Неравный брак (картина)',
+      'Тайная вечеря': 'Тайная вечеря (Леонардо да Винчи)',
+      'Тройка (Ученики мастеровые везут воду)': 'Тройка (картина Перова)',
+      'Охотники на привале': 'Охотники на привале',
+      'Грачи прилетели': 'Грачи прилетели',
+      'Апофеоз войны': 'Апофеоз войны',
+      'Пётр I допрашивает царевича Алексея в Петергофе': 'Пётр I допрашивает царевича Алексея в Петергофе',
+      'Христос в пустыне': 'Христос в пустыне (картина Крамского)',
+      'Бурлаки на Волге': 'Бурлаки на Волге',
+      'Рожь': 'Рожь (картина Шишкина)',
+      'Московский дворик': 'Московский дворик',
+      'Берёзовая роща': 'Берёзовая роща (картина Куинджи)',
+      'Лунная ночь на Днепре': 'Лунная ночь на Днепре',
+      'Утро стрелецкой казни': 'Утро стрелецкой казни',
+      'Алёнушка': 'Алёнушка (картина)',
+      'Витязь на распутье': 'Витязь на распутье',
+      'Неизвестная': 'Неизвестная (картина)',
+      'Меншиков в Берёзове': 'Меншиков в Берёзове',
+      'Крестный ход в Курской губернии': 'Крестный ход в Курской губернии',
+      'Не ждали': 'Не ждали (картина)',
+      'Иван Грозный и сын его Иван': 'Иван Грозный и сын его Иван 16 ноября 1581 года',
+      'Боярыня Морозова': 'Боярыня Морозова (картина)',
+      'Утро в сосновом лесу': 'Утро в сосновом лесу',
+      'Иван Царевич на Сером Волке': 'Иван-царевич на Сером Волке',
+      'Что есть истина? Христос и Пилат': 'Что есть истина?',
+      'Запорожцы пишут письмо турецкому султану': 'Запорожцы (картина)',
+      'Богатыри': 'Богатыри (картина Васнецова)',
+      'Переход Суворова через Альпы': 'Переход Суворова через Альпы (картина)',
+      'Девочка с персиками': 'Девочка с персиками',
+      'Девушка, освещённая солнцем': 'Девушка, освещённая солнцем',
+      'Видение отроку Варфоломею': 'Видение отроку Варфоломею',
+      'Демон сидящий': 'Демон сидящий',
+      'Над вечным покоем': 'Над вечным покоем',
+      'Золотая осень': 'Золотая осень (картина Левитана)',
+      'Царевна-Лебедь': 'Царевна-Лебедь (картина)',
+      'Заморские гости': 'Заморские гости',
+      'Похищение Европы': 'Похищение Европы (картина Серова)',
+      'Купчиха за чаем': 'Купчиха за чаем',
+      'Купание красного коня': 'Купание красного коня',
+      'Композиция VII': 'Композиция VII',
+      'Чёрный супрематический квадрат': 'Чёрный квадрат',
+      'Над городом': 'Над городом',
+      'Композиция VIII': 'Композиция VIII',
+      'Поцелуй Иуды': 'Поцелуй Иуды (фреска Джотто)',
+      'Гентский алтарь (Поклонение Агнцу)': 'Гентский алтарь',
+      'Портрет четы Арнольфини': 'Портрет четы Арнольфини',
+      'Снятие с креста': 'Снятие с креста (картина Рогира ван дер Вейдена)',
+      'Битва при Сан-Романо': 'Битва при Сан-Романо',
+      'Диптих герцогов Урбинских': 'Урбинский диптих',
+      'Мёртвый Христос': 'Мёртвый Христос (картина Мантеньи)',
+      'Весна (Примавера)': 'Весна (картина Боттичелли)',
+      'Рождение Венеры': 'Рождение Венеры (картина Боттичелли)',
+      'Дама с горностаем': 'Дама с горностаем',
+      'Автопортрет в образе Христа (в меховом пальто)': 'Автопортрет (Дюрер, 1500)',
+      'Мона Лиза (Джоконда)': 'Мона Лиза',
+      'Спящая Венера': 'Спящая Венера',
+      'Сад земных наслаждений': 'Сад земных наслаждений',
+      'Мадонна в скалах': 'Мадонна в скалах',
+      'Афинская школа': 'Афинская школа',
+      'Сотворение Адама': 'Сотворение Адама',
+      'Сикстинская Мадонна': 'Сикстинская Мадонна',
+      'Любовь небесная и Любовь земная': 'Любовь небесная и Любовь земная',
+      'Изенгеймский алтарь': 'Изенгеймский алтарь',
+      'Вакх и Ариадна': 'Вакх и Ариадна (картина Тициана)',
+      'Послы': 'Послы (картина Гольбейна)',
+      'Пармская Мадонна (Мадонна с длинной шеей)': 'Мадонна с длинной шеей',
+      'Венера Урбинская': 'Венера Урбинская',
+      'Страшный суд': 'Страшный суд (фреска Микеланджело)',
+      'Вавилонская башня': 'Вавилонская башня (картина Брейгеля)',
+      'Брак в Кане Галилейской': 'Брак в Кане Галилейской (картина Веронезе)',
+      'Охотники на снегу (Зима)': 'Охотники на снегу',
+      'Притча о слепых': 'Притча о слепых (картина)',
+      'Погребение графа Оргаса': 'Погребение графа Оргаса',
+      'Вакх': 'Вакх (картина Караваджо)',
+      'Юдифь и Олоферн': 'Юдифь и Олоферн (картина Караваджо)',
+      'Призвание апостола Матфея': 'Призвание апостола Матфея (картина Караваджо)',
+      'Воздвижение креста': 'Воздвижение Креста (картина Рубенса)',
+      'Юдифь, обезглавливающая Олоферна': 'Юдифь, обезглавливающая Олоферна (картина Джентилески, Флоренция)',
+      'Похищение дочерей Левкиппа': 'Похищение дочерей Левкиппа',
+      'Сдача Бреды (Копья)': 'Сдача Бреды',
+      'Урок анатомии доктора Тульпа': 'Урок анатомии доктора Тульпа',
+      'Персей и Андромеда': 'Персей и Андромеда (картина Рубенса)',
+      'Аркадские пастухи (Et in Arcadia ego)': 'Аркадские пастухи',
+      'Ночной дозор': 'Ночной дозор',
+      'Портрет папы Иннокентия X': 'Портрет папы Иннокентия X',
+      'Менины (Фрейлины)': 'Менины',
+      'Молочница': 'Молочница (картина Вермеера)',
+      'Вид Делфта': 'Вид Делфта',
+      'Девушка с жемчужной серёжкой': 'Девушка с жемчужной серёжкой',
+      'Аллегория живописи (Мастерская художника)': 'Искусство живописи',
+      'Возвращение блудного сына': 'Возвращение блудного сына (картина Рембрандта)',
+      'Паломничество на остров Киферу': 'Паломничество на остров Киферу',
+      'Качели': 'Качели (картина Фрагонара)',
+      'Клятва Горациев': 'Клятва Горациев',
+      'Смерть Марата': 'Смерть Марата',
+      'Маха обнажённая / Маха одетая': 'Маха обнажённая',
+      'Бонапарт на перевале Сен-Бернар': 'Бонапарт на перевале Сен-Бернар',
+      'Большая одалиска': 'Большая одалиска',
+      'Третье мая 1808 года в Мадриде': 'Третье мая 1808 года в Мадриде',
+      'Странник над морем тумана': 'Странник над морем тумана',
+      'Плот «Медузы»': 'Плот «Медузы»',
+      'Телега для сена': 'Телега для сена (картина Констебла)',
+      'Сатурн, пожирающий своего сына': 'Сатурн, пожирающий своего сына',
+      'Свобода, ведущая народ': 'Свобода, ведущая народ',
+      'Большая волна в Канагаве': 'Большая волна в Канагаве',
+      'Последний рейс корабля «Отважный»': 'Последний рейс корабля «Отважный»',
+      'Офелия': 'Офелия (картина Милле)',
+      'Сборщицы колосьев': 'Сборщицы колосьев',
+      'Завтрак на траве': 'Завтрак на траве (картина Мане)',
+      'Олимпия': 'Олимпия (картина Мане)',
+      'Мать Уистлера (Аранжировка в сером и чёрном № 1)': 'Мать Уистлера',
+      'Впечатление. Восходящее солнце': 'Впечатление. Восходящее солнце',
+      'Дама с зонтиком (Мадам Моне с сыном)': 'Прогулка. Дама с зонтиком',
+      'Танцевальный класс (Голубые танцовщицы)': 'Голубые танцовщицы',
+      'Бал в Мулен де ла Галетт': 'Бал в Мулен де ла Галетт',
+      'Завтрак гребцов': 'Завтрак гребцов',
+      'Бар в «Фоли-Бержер»': 'Бар в «Фоли-Бержер»',
+      'Воскресный день на острове Гранд-Жатт': 'Воскресный день на острове Гранд-Жатт',
+      'Едоки картофеля': 'Едоки картофеля',
+      'Подсолнухи': 'Подсолнухи (серия картин)',
+      'Ночная терраса кафе': 'Ночная терраса кафе',
+      'Спальня в Арле': 'Спальня в Арле',
+      'Звёздная ночь': 'Звёздная ночь',
+      'Автопортрет с перевязанным ухом': 'Автопортрет с отрезанным ухом и трубкой',
+      'А, ты ревнуешь? (Когда свадьба?)': 'А, ты ревнуешь?',
+      'Игроки в карты': 'Игроки в карты',
+      'Откуда мы пришли? Кто мы? Куда мы идём?': 'Откуда мы пришли? Кто мы? Куда мы идём?',
+      'Кувшинки (Японский мостик в Живерни)': 'Кувшинки (серия картин Моне)',
+      'Крик': 'Крик (картина Мунка)',
+      'Спящая цыганка': 'Спящая цыганка',
+      'Девочка на шаре': 'Девочка на шаре',
+      'Авиньонские девицы': 'Авиньонские девицы',
+      'Портрет Адели Блох-Бауэр I (Золотая Адель)': 'Портрет Адели Блох-Бауэр I',
+      'Поцелуй': 'Поцелуй (картина Климта)',
+      'Танец': 'Танец (картина Матисса)',
+      'Обнажённая, спускающаяся по лестнице № 2': 'Обнажённая, спускающаяся по лестнице',
+      'Большие купальщицы / Лежащая обнажённая': 'Лежащая обнажённая (картина Модильяни)',
+      'Три музыканта': 'Три музыканта (картина Пикассо)',
+      'Вероломство образов (Это не трубка)': 'Вероломство образов',
+      'Американская готика': 'Американская готика',
+      'Постоянство памяти (Мягкие часы)': 'Постоянство памяти',
+      'Герника': 'Герника (картина)',
+      'Две Фриды': 'Две Фриды',
+      'Полуночники (Ночные ястребы)': 'Полуночники',
+      'Мир Кристины': 'Мир Кристины',
+      'Сын человеческий': 'Сын человеческий (картина)'
+    };
+
+    async function resolveArtworkImage(art) {
+      if (!art) return '';
+      if (WIKI_IMAGE_CACHE[art.id]) return WIKI_IMAGE_CACHE[art.id];
+
+      // Особые случаи с одинаковым названием «Тайная вечеря» или «Троица» у разных мастеров
+      let wikiTitle = WIKI_EXACT_TITLES[art.title] || art.title;
+      if (art.title === 'Тайная вечеря' && art.artist.includes('Ге')) wikiTitle = 'Тайная вечеря (картина Ге)';
+      if (art.title === 'Тайная вечеря' && art.artist.includes('Тинторетто')) wikiTitle = 'Тайная вечеря (картина Тинторетто)';
+      if (art.title === 'Троица' && art.artist.includes('Мазаччо')) wikiTitle = 'Троица (фреска Мазаччо)';
+
+      try {
+        // 1. Запрос к русскому API Wikipedia за прямой ссылкой на превью картины (960px)
+        const url = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(wikiTitle)}&prop=pageimages&pithumbsize=960&redirects=1&format=json&origin=*`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const pages = data?.query?.pages || {};
+        for (const p of Object.values(pages)) {
+          if (p.thumbnail && p.thumbnail.source) {
+            WIKI_IMAGE_CACHE[art.id] = p.thumbnail.source;
+            art.img = p.thumbnail.source;
+            return p.thumbnail.source;
+          }
+        }
+
+        // 2. Если точное имя статьи отличается — быстрый поиск по «Название + Художник»
+        const searchQ = `${art.title} ${art.artist.split(' ')[0]}`;
+        const sUrl = `https://ru.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(searchQ)}&gsrlimit=2&prop=pageimages&pithumbsize=960&format=json&origin=*`;
+        const sRes = await fetch(sUrl);
+        const sData = await sRes.json();
+        const sPages = sData?.query?.pages || {};
+        for (const p of Object.values(sPages)) {
+          if (p.thumbnail && p.thumbnail.source) {
+            WIKI_IMAGE_CACHE[art.id] = p.thumbnail.source;
+            art.img = p.thumbnail.source;
+            return p.thumbnail.source;
+          }
+        }
+      } catch (e) {}
+
+      return art.img || '';
+    }
+
+    async function hydrateQuestionImages(q) {
+      if (!q) return;
+      const items = [q.target, ...(q.choices || [])];
+      await Promise.all(items.map(async (item) => {
+        const src = await resolveArtworkImage(item);
+        if (src) {
+          document.querySelectorAll(`img[data-art-id="${item.id}"]`).forEach(imgEl => {
+            if (imgEl.src !== src) {
+              imgEl.src = src;
+              imgEl.style.display = 'block';
+            }
+          });
+        }
+      }));
+    }
+
+    // Фоновая предзагрузка картин при старте приложения
+    async function preloadGalleryBatch() {
+      const priority = ARTWORKS_DB.slice(0, 30);
+      for (let i = 0; i < priority.length; i += 6) {
+        await Promise.all(priority.slice(i, i + 6).map(resolveArtworkImage));
+      }
+    }
+
+    // ==========================================
+    // КОНФИГУРАЦИЯ 4 БЛОКОВ КОНСТРУКТОРА (С ЖИВЫМ ПОДСЧЕТОМ КАРТИН В КАЖДОЙ ЭПОХЕ)
+    // ==========================================
+    const SCOPE_CONFIG = {
+      WORLD: {
+        epochs: [
+          { id: 'ALL', label: 'Все Мировые шедевры (Включая Россию)', desc: 'Единый мировой золотой фонд: Лувр, Прадо, Уффици, Третьяковка, Эрмитаж и MoMA', icon: 'frame' },
+          { id: 'W_REN', label: 'Средневековье и Эпоха Возрождения', desc: 'Да Винчи, Микеланджело, Рафаэль, Боттичелли, Босх, Брейгель, Рублёв', icon: 'museum' },
+          { id: 'W_BAR', label: 'Барокко и Золотой век Голландии', desc: 'Караваджо, Рембрандт, Ян Вермеер, Веласкес, Рубенс, Пуссен', icon: 'palette' },
+          { id: 'W_ROM', label: 'Классицизм и Романтизм (XVIII–XIX вв.)', desc: 'Давид, Гойя, Делакруа, Фридрих, Тёрнер, Хокусай, Брюллов, Айвазовский', icon: 'frame' },
+          { id: 'W_IMP', label: 'Реализм, Импрессионизм и Постимпрессионизм', desc: 'Моне, Ренуар, Ван Гог, Гоген, Сезанн, Репин, Суриков, Шишкин, Серов', icon: 'palette' },
+          { id: 'W_MOD', label: 'Модерн, Авангард и Сюрреализм (XX в.)', desc: 'Климт, Мунк, Пикассо, Дали, Магритт, Матисс, Малевич, Кандинский, Шагал', icon: 'zoom_macro' }
+        ]
+      },
+      RU: {
+        epochs: [
+          { id: 'ALL', label: 'Вся Русская живопись из Мирового топа', desc: 'Все русские шедевры мировой базы: от Андрея Рублёва до авангарда XX века', icon: 'frame' },
+          { id: 'RU_OLD', label: 'Древнерусская иконопись (XII–XVII вв.)', desc: 'Андрей Рублёв, Феофан Грек, Дионисий, Симон Ушаков', icon: 'museum' },
+          { id: 'RU_ROM', label: 'Классицизм и Романтизм (XVIII–XIX вв.)', desc: 'Левицкий, Кипренский, Карл Брюллов, Иван Айвазовский, Александр Иванов', icon: 'palette' },
+          { id: 'RU_PER', label: 'Реализм и Товарищество передвижников', desc: 'Репин, Суриков, Шишкин, Васнецов, Перов, Крамской, Саврасов, Куинджи', icon: 'frame' },
+          { id: 'RU_MOD', label: 'Серебряный век, Импрессионизм и Модерн', desc: 'Валентин Серов, Михаил Врубель, Исаак Левитан, Николай Рерих, Кустодиев', icon: 'palette' },
+          { id: 'RU_AVN', label: 'Русский Авангард и Супрематизм (XX в.)', desc: 'Казимир Малевич, Василий Кандинский, Марк Шагал, Кузьма Петров-Водкин', icon: 'zoom_macro' }
+        ]
+      }
+    };
+
+    const QUESTION_TYPES = [
+      { id: 'canvas_full', rightLabel: 'Q_CNV', label: 'Полотно целиком', desc: 'На экране показана сама картина в музейной раме', icon: 'frame' },
+      { id: 'macro_zoom', rightLabel: 'Q_ZOM', label: 'Макро-Фрагмент (Деталь 15%)', desc: 'Увеличенный фрагмент картины; после ответа камера показывает весь холст', icon: 'zoom_macro' },
+      { id: 'plot_story', rightLabel: 'Q_PLT', label: 'Скрытый сюжет и История создания', desc: 'Текстовое описание драмы и деталей картины без спойлера названия', icon: 'scroll_plot' },
+      { id: 'artist_bio', rightLabel: 'Q_BIO', label: 'Почерк и Досье Мастера', desc: 'Факты о жизни автора и тайне создания его главного шедевра', icon: 'palette' },
+      { id: 'museum_year', rightLabel: 'Q_LOC', label: 'Музей прописки и Год создания', desc: 'Даны музей мира, в котором хранится оригинал, и год написания', icon: 'museum' },
+      { id: 'title_given', rightLabel: 'Q_NAM', label: 'Название шедевра и Автор', desc: 'Даны название и художник — идеально для поиска картины в Галерее!', icon: 'name_tag' }
+    ];
+
+    const ANSWER_TYPES = [
+      { id: 'choices_4', rightLabel: 'ANS_04', label: 'Выбор из 4 вариантов (Шедевр + Автор)', desc: '4 карточки («Картина — Художник» или «Музей и Год», если дано название)', icon: 'choices_4' },
+      { id: 'visual_gallery', rightLabel: 'ANS_GAL', label: 'Указать полотно в Визуальной Галерее', desc: 'Аналог карты: выбери правильную картину из сетки 4 репродукций!', icon: 'frame' },
+      { id: 'text_input', rightLabel: 'ANS_IN', label: 'Вписать автора или название вручную', desc: 'Свободный ввод фамилии художника или картины с автоподсказкой', icon: 'terminal_input' },
+      { id: 'chrono_slider', rightLabel: 'ANS_CHR', label: 'Хроно-Шкала (Год написания шедевра)', desc: 'Наведи ползунок времени на год создания картины (±12 лет)', icon: 'chrono_radar' }
+    ];
+
+    const GAME_MODES = [
+      { id: 'standard', rightLabel: 'SOLO // FREE', label: 'Стандарт (Без таймера и жизней)', desc: 'Спокойный музейный режим без ограничений по времени и ошибкам', icon: 'frame' },
+      { id: 'blitz', rightLabel: 'SOLO // 60S', label: 'Блиц-Аукцион (60 сек)', desc: 'Максимум очков за одну минуту на скорость реакции', icon: 'blitz_bolt' },
+      { id: 'survival', rightLabel: 'SOLO // 3HP', label: 'Выживание (3 щита)', desc: 'Игра без таймера до трех допущенных ошибок', icon: 'shield_life' },
+      { id: 'local_duel', rightLabel: '1V1 // ЭКРАН', label: 'Дуэль 1 на 1 (На одном экране)', desc: 'Вдвоем за одним устройством: 1-4/WASD против Стрелок', icon: 'duel_swords' },
+      { id: 'online_duel', rightLabel: '1V1 // СЕТЬ', label: 'Онлайн 1 на 1 (По коду)', desc: 'Сетевая дуэль с другом по четырехзначному коду комнаты', icon: 'museum' }
+    ];
+
+    // ==========================================
+    // СОСТОЯНИЕ ИГРЫ (ПО УМОЛЧАНИЮ ОТКРЫТЫ МИРОВЫЕ ШЕДЕВРЫ)
+    // ==========================================
+    let state = {
+      scope: 'WORLD',
+      era: 'ALL',
+      questionType: 'canvas_full',
+      answerType: 'choices_4',
+      gameMode: 'standard',
+      screen: 'menu',
+      round: 1,
+      totalRounds: 10,
+      score: 0,
+      streak: 0,
+      correctCount: 0,
+      lives: 3,
+      timeLeft: 60,
+      timerId: null,
+      roundStartTime: 0,
+      roundPackets: [],
+      currentQ: null,
+      feedback: null,
+      p1Score: 0,
+      p2Score: 0,
+      p1Streak: 0,
+      p2Streak: 0,
+      p1Correct: 0,
+      p2Correct: 0,
+      peer: null,
+      conn: null,
+      opponentFinished: false,
+      opponentFinalScore: 0,
+      opponentCorrectCount: 0
+    };
+
+    function countArtworksForEpoch(scope, epochId) {
+      return ARTWORKS_DB.filter(art => {
+        if (scope === 'RU' && !art.isRussian) return false;
+        if (epochId === 'ALL') return true;
+        return scope === 'RU' ? art.eraRU === epochId : art.eraWORLD === epochId;
+      }).length;
+    }
+
+    function getFilteredPool() {
+      const pool = ARTWORKS_DB.filter(art => {
+        if (state.scope === 'RU' && !art.isRussian) return false;
+        if (state.era === 'ALL') return true;
+        return state.scope === 'RU' ? art.eraRU === state.era : art.eraWORLD === state.era;
+      });
+      return pool.length >= 4 ? pool : ARTWORKS_DB;
+    }
+
+    // Генератор музейной картины с мгновенной подгрузкой из Wikipedia API и обходом блокировки Referer
+    function renderPaintingBox(art, isMacro = false, extraClasses = 'w-72 h-52 sm:w-96 sm:h-64') {
+      const [c1, c2, c3] = art.colors || ['#3b5998', '#d4a94e', '#1c1817'];
+      const zoomStyle = isMacro
+        ? `transform: scale(2.85); transform-origin: ${art.macroX || 50}% ${art.macroY || 50}%;`
+        : 'transform: scale(1); transform-origin: 50% 50%;';
+      const initialSrc = WIKI_IMAGE_CACHE[art.id] || art.img || '';
+
+      return `
+        <div class="relative ${extraClasses} rounded-2xl overflow-hidden border-2 border-[#ebd6b6]/35 shadow-[0_20px_50px_rgba(0,0,0,0.85)] bg-[#0c0f16] flex items-center justify-center mx-auto">
+          <div id="activeCanvasZoomWrap" class="w-full h-full relative macro-canvas-zoom" style="${zoomStyle}">
+            <svg viewBox="0 0 320 220" preserveAspectRatio="xMidYMid slice" class="w-full h-full object-cover">
+              <defs>
+                <linearGradient id="grad_${art.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="${c1}" />
+                  <stop offset="55%" stop-color="${c2}" />
+                  <stop offset="100%" stop-color="${c3}" />
+                </linearGradient>
+              </defs>
+              <rect width="320" height="220" fill="url(#grad_${art.id})" />
+              <circle cx="${(art.macroX || 50) * 3.2}" cy="${(art.macroY || 45) * 2.2}" r="48" fill="${c2}" fill-opacity="0.45" />
+              <path d="M 0,165 Q 95,120 180,155 T 320,145 L 320,220 L 0,220 Z" fill="${c3}" fill-opacity="0.65" />
+            </svg>
+            <img
+              data-art-id="${art.id}"
+              src="${initialSrc}"
+              alt=""
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
+              style="${initialSrc ? 'display:block;' : 'display:none;'}"
+              onerror="this.style.display='none'"
+              class="absolute inset-0 w-full h-full object-contain bg-[#090c12]"
+            />
+          </div>
+          ${isMacro ? `
+            <div id="macroBadgeOverlay" class="absolute top-2.5 left-3 px-2.5 py-1 rounded bg-black/80 border border-white/20 font-mono text-[10px] text-[#f5efe4] pointer-events-none">
+              [ МАКРО-ФРАГМЕНТ 15% // УГАДАЙТЕ ПОЛОТНО ]
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function setTotalRounds(n) {
+      sfx.play('click');
+      state.totalRounds = n;
+      [10, 20, 50, 999].forEach(val => {
+        const btn = document.getElementById(`roundBtn-${val}`);
+        if (!btn) return;
+        btn.className = val === n
+          ? 'px-2 py-0.5 rounded bg-[#f5efe4] text-[#111318] font-bold'
+          : 'px-2 py-0.5 rounded bg-white/5 text-[#cbbca4]';
+      });
+    }
+
+    function renderConstructor() {
+      const cfg = SCOPE_CONFIG[state.scope];
+      const activeEpochObj = cfg.epochs.find(e => e.id === state.era) || cfg.epochs[0];
+      const currentPoolSize = getFilteredPool().length;
+      const totalWorldCount = ARTWORKS_DB.length;
+      const totalRussianCount = ARTWORKS_DB.filter(a => a.isRussian).length;
+
+      document.getElementById('scopeBtn-WORLD').textContent = `[ МИРОВЫЕ ШЕДЕВРЫ: ${totalWorldCount} ]`;
+      document.getElementById('scopeBtn-RU').textContent = `[ РУССКАЯ ЖИВОПИСЬ: ${totalRussianCount} ]`;
+
+      ['WORLD', 'RU'].forEach(sc => {
+        const btn = document.getElementById(`scopeBtn-${sc}`);
+        btn.className = `top-pill ${sc === state.scope ? 'active' : ''} px-3.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs tracking-wider uppercase`;
+      });
+
+      document.getElementById('poolBlock01').textContent = `ПУЛ: ${currentPoolSize} КАРТИН`;
+      document.getElementById('launchBtnLabel').textContent =
+        state.gameMode === 'online_duel' ? 'ОТКРЫТЬ ЛОББИ 1 НА 1' : `ЗАПУСТИТЬ ЭКСПОЗИЦИЮ (${currentPoolSize})`;
+
+      document.getElementById('footerArchiveBreakdown').innerHTML =
+        `[ СЕКТОР: <strong class="text-[#f5efe4]">${activeEpochObj.label.toUpperCase()}</strong> // ПУЛ: <strong class="text-[#f5efe4]">${currentPoolSize} ШЕДЕВРОВ</strong> ]`;
+
+      // Блок 01: Эпохи с живым счётчиком картин
+      document.getElementById('gridEpochs').innerHTML = cfg.epochs.map(e => {
+        const active = state.era === e.id;
+        const count = countArtworksForEpoch(state.scope, e.id);
+        return `
+          <button
+            type="button"
+            onclick="selectEra('${e.id}')"
+            class="row-pill ${active ? 'active' : ''} w-full px-4 py-3.5 rounded-2xl text-left flex items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="row-icon text-[#f5efe4] shrink-0">
+                ${getArtSvg(e.icon, 'w-6 h-6')}
+              </div>
+              <div class="min-w-0">
+                <div class="font-bold text-sm sm:text-base leading-tight truncate">${e.label}</div>
+                <div class="sub-desc text-[11px] text-[#cbbca4] truncate mt-0.5">${e.desc}</div>
+              </div>
+            </div>
+            <span class="right-meta text-xs font-mono text-[#cbbca4] shrink-0 uppercase">
+              ${count} КАРТИН
+            </span>
+          </button>
+        `;
+      }).join('');
+
+      // Блок 02: Что дано (Задание)
+      document.getElementById('gridQuestions').innerHTML = QUESTION_TYPES.map(q => {
+        const active = state.questionType === q.id;
+        return `
+          <button
+            type="button"
+            onclick="selectQuestionType('${q.id}')"
+            class="row-pill ${active ? 'active' : ''} w-full px-4 py-3.5 rounded-2xl text-left flex items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="row-icon text-[#f5efe4] shrink-0">
+                ${getArtSvg(q.icon, 'w-6 h-6')}
+              </div>
+              <div class="min-w-0">
+                <div class="font-bold text-sm sm:text-base leading-tight truncate">${q.label}</div>
+                <div class="sub-desc text-[11px] text-[#cbbca4] truncate mt-0.5">${q.desc}</div>
+              </div>
+            </div>
+            <span class="right-meta text-xs font-mono text-[#cbbca4] shrink-0 uppercase">
+              ${q.rightLabel}
+            </span>
+          </button>
+        `;
+      }).join('');
+
+      // Блок 03: Как отвечаем (Механика)
+      document.getElementById('gridAnswers').innerHTML = ANSWER_TYPES.map(a => {
+        const active = state.answerType === a.id;
+        return `
+          <button
+            type="button"
+            onclick="selectAnswerType('${a.id}')"
+            class="row-pill ${active ? 'active' : ''} w-full px-4 py-3.5 rounded-2xl text-left flex items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="row-icon text-[#f5efe4] shrink-0">
+                ${getArtSvg(a.icon, 'w-6 h-6')}
+              </div>
+              <div class="min-w-0">
+                <div class="font-bold text-sm sm:text-base leading-tight truncate">${a.label}</div>
+                <div class="sub-desc text-[11px] text-[#cbbca4] truncate mt-0.5">${a.desc}</div>
+              </div>
+            </div>
+            <span class="right-meta text-xs font-mono text-[#cbbca4] shrink-0 uppercase">
+              ${a.rightLabel}
+            </span>
+          </button>
+        `;
+      }).join('');
+
+      // Блок 04: Режимы игры
+      document.getElementById('gridModes').innerHTML = GAME_MODES.map(m => {
+        const active = state.gameMode === m.id;
+        return `
+          <button
+            type="button"
+            onclick="selectGameMode('${m.id}')"
+            class="row-pill ${active ? 'active' : ''} w-full px-4 py-3 rounded-2xl text-left flex items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="row-icon text-[#f5efe4] shrink-0">
+                ${getArtSvg(m.icon, 'w-6 h-6')}
+              </div>
+              <div class="min-w-0">
+                <div class="font-bold text-sm sm:text-base leading-tight truncate">${m.label}</div>
+                <div class="sub-desc text-[11px] text-[#cbbca4] truncate mt-0.5">${m.desc}</div>
+              </div>
+            </div>
+            <span class="right-meta text-xs font-mono text-[#cbbca4] shrink-0 uppercase">
+              ${m.rightLabel}
+            </span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setScope(sc) {
+      sfx.play('click');
+      state.scope = sc;
+      state.era = 'ALL';
+      renderConstructor();
+      if (state.screen === 'play') startSession();
+    }
+    function selectEra(id) {
+      sfx.play('click');
+      state.era = id;
+      renderConstructor();
+    }
+    function selectQuestionType(id) {
+      sfx.play('click');
+      state.questionType = id;
+      // Если в Блоке 02 уже показана вся картина целиком, а в Блоке 03 стояла Визуальная Галерея, переключаем на 4 варианта
+      if (id === 'canvas_full' && state.answerType === 'visual_gallery') {
+        state.answerType = 'choices_4';
+      }
+      renderConstructor();
+    }
+    function selectAnswerType(id) {
+      sfx.play('click');
+      state.answerType = id;
+      // Если в Блоке 03 выбрана Визуальная Галерея, а в Блоке 02 стояло Полотно целиком, ставим Название или Сюжет
+      if (id === 'visual_gallery' && state.questionType === 'canvas_full') {
+        state.questionType = 'title_given';
+      }
+      renderConstructor();
+    }
+    function selectGameMode(id) {
+      sfx.play('click');
+      state.gameMode = id;
+      renderConstructor();
+    }
+
+    function setScreen(scr) {
+      clearInterval(state.timerId);
+      state.screen = scr;
+      ['menu', 'lobby', 'play', 'summary'].forEach(s => {
+        document.getElementById(`screen-${s}`).classList.toggle('hidden', s !== scr);
+      });
+    }
+
+    function handleLaunchClick() {
+      sfx.play('click');
+      if (state.gameMode === 'online_duel') {
+        document.getElementById('roomCodeDisplay').textContent = String(Math.floor(1000 + Math.random() * 9000));
+        setScreen('lobby');
+        createPeerHost();
+      } else {
+        startSession();
+      }
+    }
+
+    function buildQuestion() {
+      const pool = getFilteredPool();
+      const target = pool[Math.floor(Math.random() * pool.length)];
+      // Соперники подбираются в первую очередь из той же эпохи и текущего пула
+      const sameEra = pool.filter(x => x.id !== target.id && x.eraWORLD === target.eraWORLD);
+      const sourceForDistractors = sameEra.length >= 3 ? sameEra : pool.filter(x => x.id !== target.id);
+      const others = [...sourceForDistractors]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+      const choices = [target, ...others].sort(() => Math.random() - 0.5);
+      return { target, choices };
+    }
+
+    function generateMatchPackets(count) {
+      const packets = [];
+      const total = count === 999 ? 120 : count;
+      for (let i = 0; i < total; i++) {
+        packets.push(buildQuestion());
+      }
+      return packets;
+    }
+
+    function startSession(providedPackets = null) {
+      clearInterval(state.timerId);
+      state.round = 1;
+      state.score = 0;
+      state.streak = 0;
+      state.correctCount = 0;
+      state.lives = 3;
+      state.timeLeft = 60;
+      state.p1Score = 0;
+      state.p2Score = 0;
+      state.p1Streak = 0;
+      state.p2Streak = 0;
+      state.p1Correct = 0;
+      state.p2Correct = 0;
+      state.opponentFinished = false;
+      state.opponentFinalScore = 0;
+      state.opponentCorrectCount = 0;
+      state.feedback = null;
+
+      if (providedPackets && providedPackets.length > 0) {
+        state.roundPackets = providedPackets;
+      } else {
+        const pktCount = state.gameMode === 'blitz' ? 150 : state.totalRounds;
+        state.roundPackets = generateMatchPackets(pktCount);
+      }
+
+      state.currentQ = state.roundPackets[0] || buildQuestion();
+      setScreen('play');
+
+      if (state.gameMode === 'blitz') {
+        state.timerId = setInterval(() => {
+          state.timeLeft--;
+          renderPlayTopBar();
+          if (state.timeLeft <= 0) {
+            clearInterval(state.timerId);
+            finishMatchSession();
+          }
+        }, 1000);
+      }
+
+      renderPlayScreen();
+    }
+
+    function finishMatchSession() {
+      clearInterval(state.timerId);
+      state.screen = 'summary';
+      if (state.gameMode === 'online_duel' && state.conn && state.conn.open) {
+        state.conn.send({
+          type: 'MATCH_FINISHED',
+          finalScore: state.score,
+          correctCount: state.correctCount
+        });
+      }
+      renderSummary();
+      setScreen('summary');
+    }
+
+    function renderPlayTopBar() {
+      const leftEl = document.getElementById('playLeftStat');
+      const rightEl = document.getElementById('playRightStat');
+      const roundsDisplay = state.totalRounds === 999 ? '∞' : state.totalRounds;
+
+      if (state.gameMode === 'local_duel') {
+        leftEl.innerHTML = `РАУНД: <strong class="text-[#f5efe4]">${state.round} / ${roundsDisplay}</strong>`;
+        rightEl.innerHTML = `
+          <span class="px-2.5 py-1 rounded bg-[#f5efe4] text-[#111318] font-bold">P1 (${state.p1Correct}): ${state.p1Score} PTS</span>
+          <span class="px-2.5 py-1 rounded bg-white/10 text-[#f5efe4] font-bold">P2 (${state.p2Correct}): ${state.p2Score} PTS</span>
+        `;
+      } else if (state.gameMode === 'online_duel') {
+        leftEl.innerHTML = `РАУНД: <strong class="text-[#f5efe4]">${state.round} / ${roundsDisplay}</strong>`;
+        rightEl.innerHTML = `
+          <span class="text-[#cbbca4]">СЕРИЯ: <strong class="text-emerald-400">×${state.streak}</strong></span>
+          <span class="text-[#cbbca4]">ВАШИ ОЧКИ: <strong class="text-[#f5efe4]">${state.score} PTS</strong></span>
+          <span class="text-[#cbbca4]/60 hidden sm:inline">[ СЧЕТ СОПЕРНИКА СКРЫТ ]</span>
+        `;
+      } else {
+        leftEl.innerHTML = `РАУНД: <strong class="text-[#f5efe4]">${state.round} / ${roundsDisplay}</strong>`;
+        const shieldsHtml = state.gameMode === 'survival'
+          ? `<span class="flex items-center gap-1">${[1, 2, 3].map(h =>
+              `<span class="${h <= state.lives ? 'text-[#f5efe4]' : 'text-white/20'}">${getArtSvg('shield_life', 'w-4 h-4')}</span>`
+            ).join('')}</span>`
+          : '';
+        const blitzHtml = state.gameMode === 'blitz'
+          ? `<span class="px-2.5 py-0.5 rounded bg-[#f5efe4] text-[#111318] font-black">${state.timeLeft}S</span>`
+          : '';
+        rightEl.innerHTML = `
+          ${shieldsHtml}
+          ${blitzHtml}
+          <span class="text-[#cbbca4]">КОМБО: <strong class="text-emerald-400">×${state.streak}</strong></span>
+          <span class="text-[#cbbca4]">ОЧКИ: <strong class="text-[#f5efe4]">${state.score} PTS</strong></span>
+        `;
+      }
+    }
+
+    function formatChoiceLabel(art) {
+      // Если в Блоке 02 уже дано Название и Автор, то на кнопках выводим Музей и Год (0% логических противоречий!)
+      if (state.questionType === 'title_given') {
+        return `${art.year} г. • ${art.museum}`;
+      }
+      return `«${art.title}» — ${art.artist}`;
+    }
+
+    function renderPlayScreen() {
+      state.roundStartTime = Date.now();
+      renderPlayTopBar();
+      const q = state.currentQ;
+      const art = q.target;
+
+      const fbBox = document.getElementById('playFeedbackBox');
+      fbBox.classList.add('hidden');
+
+      const promptEl = document.getElementById('playQuestionPrompt');
+      const ansEl = document.getElementById('playAnswerArea');
+
+      // 1. РЕНДЕР ЗАДАНИЯ В ЗАВИСИМОСТИ ОТ ВЫБРАННОГО ПУНКТА БЛОКА 02
+      if (state.questionType === 'canvas_full') {
+        promptEl.innerHTML = renderPaintingBox(art, false);
+      } else if (state.questionType === 'macro_zoom') {
+        promptEl.innerHTML = renderPaintingBox(art, true);
+      } else if (state.questionType === 'plot_story') {
+        promptEl.innerHTML = `
+          <div class="max-w-2xl px-7 py-6 rounded-2xl bg-[#11151f]/90 border border-[#ebd6b6]/20 text-center space-y-2 shadow-xl">
+            <div class="text-[10px] font-mono text-[#cbbca4] uppercase tracking-widest">[ СКРЫТЫЙ СЮЖЕТ ПОЛОТНА // ОПИСАНИЕ ]</div>
+            <div class="text-base sm:text-xl font-bold text-[#f5efe4] leading-relaxed">«${art.plot}»</div>
+          </div>
+        `;
+      } else if (state.questionType === 'artist_bio') {
+        promptEl.innerHTML = `
+          <div class="max-w-2xl px-7 py-6 rounded-2xl bg-[#11151f]/90 border border-[#ebd6b6]/20 text-center space-y-2 shadow-xl">
+            <div class="text-[10px] font-mono text-[#cbbca4] uppercase tracking-widest">[ ПОЧЕРК И ДОСЬЕ МАСТЕРА ]</div>
+            <div class="text-base sm:text-xl font-bold text-[#f5efe4] leading-relaxed">${art.bio}</div>
+            <div class="text-xs font-mono text-[#cbbca4] pt-1">Музей шедевра: ${art.museum}</div>
+          </div>
+        `;
+      } else if (state.questionType === 'museum_year') {
+        promptEl.innerHTML = `
+          <div class="px-8 py-6 rounded-2xl bg-[#11151f]/90 border border-[#ebd6b6]/20 text-center space-y-2 shadow-xl">
+            <div class="text-[10px] font-mono text-[#cbbca4] uppercase tracking-widest">[ МУЗЕЙ ПРОПИСКИ И ДАТА СОЗДАНИЯ ]</div>
+            <div class="text-2xl sm:text-4xl font-black font-mono text-[#f5efe4]">${art.year} г.</div>
+            <div class="text-sm sm:text-base font-bold text-[#d8cbb8]">${art.museum}</div>
+          </div>
+        `;
+      } else if (state.questionType === 'title_given') {
+        promptEl.innerHTML = `
+          <div class="px-8 py-6 rounded-2xl bg-[#11151f]/90 border border-[#ebd6b6]/20 text-center space-y-1.5 shadow-xl">
+            <div class="text-[10px] font-mono text-[#cbbca4] uppercase tracking-widest">[ ЗАГАДАННЫЙ ШЕДЕВР ]</div>
+            <div class="text-2xl sm:text-3xl font-black uppercase tracking-wide text-[#f5efe4]">«${art.title}»</div>
+            <div class="text-sm sm:text-base font-semibold text-[#cbbca4]">${art.artist}</div>
+          </div>
+        `;
+      }
+
+      // 2. РЕНДЕР МЕХАНИКИ ОТВЕТА В ЗАВИСИМОСТИ ОТ БЛОКА 03
+      if (state.gameMode === 'local_duel' && state.answerType === 'choices_4') {
+        ansEl.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <div class="p-4 rounded-2xl bg-[#11151f]/80 border border-[#ebd6b6]/15">
+              <div class="text-xs font-mono font-bold text-[#f5efe4] mb-3 flex items-center justify-between">
+                <span>ИГРОК 1 [ КЛАВИШИ 1-4 / WASD ]</span>
+                <span class="text-[#cbbca4]">ОЧКИ: ${state.p1Score}</span>
+              </div>
+              <div class="grid grid-cols-1 gap-2">
+                ${q.choices.map((c, idx) => `
+                  <button
+                    type="button"
+                    onclick="submitArtChoice('${c.id}', 1, ${idx})"
+                    class="row-pill p-3 rounded-xl text-left text-xs font-bold flex items-center justify-between gap-2"
+                  >
+                    <span class="truncate">${formatChoiceLabel(c)}</span>
+                    <kbd class="text-[10px] font-mono opacity-60 shrink-0">[0${idx + 1}]</kbd>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#11151f]/80 border border-[#ebd6b6]/15">
+              <div class="text-xs font-mono font-bold text-[#f5efe4] mb-3 flex items-center justify-between">
+                <span>ИГРОК 2 [ СТРЕЛКИ / МЫШЬ ]</span>
+                <span class="text-[#cbbca4]">ОЧКИ: ${state.p2Score}</span>
+              </div>
+              <div class="grid grid-cols-1 gap-2">
+                ${q.choices.map((c, idx) => `
+                  <button
+                    type="button"
+                    onclick="submitArtChoice('${c.id}', 2, ${idx})"
+                    class="row-pill p-3 rounded-xl text-left text-xs font-bold flex items-center justify-between gap-2"
+                  >
+                    <span class="truncate">${formatChoiceLabel(c)}</span>
+                    <kbd class="text-[10px] font-mono opacity-60 shrink-0">${['↑', '←', '↓', '→'][idx]}</kbd>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (state.answerType === 'choices_4') {
+        ansEl.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+            ${q.choices.map((c, idx) => `
+              <button
+                type="button"
+                id="choiceBtn-${idx}"
+                onclick="submitArtChoice('${c.id}', 1, ${idx})"
+                class="row-pill px-5 py-4 rounded-2xl font-bold text-left flex items-center justify-between gap-3"
+              >
+                <span class="text-xs sm:text-sm leading-snug">${formatChoiceLabel(c)}</span>
+                <span class="right-meta font-mono text-xs text-[#cbbca4] shrink-0">[0${idx + 1}]</span>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else if (state.answerType === 'visual_gallery') {
+        ansEl.innerHTML = `
+          <div class="w-full space-y-2">
+            <div class="text-[10px] font-mono text-[#cbbca4] text-center uppercase tracking-widest">
+              [ КЛИКНИТЕ ПО ЗАГАДАННОМУ ПОЛОТНУ В ВИЗУАЛЬНОЙ ГАЛЕРЕЕ ]
+            </div>
+            <div class="grid grid-cols-2 gap-3.5 w-full">
+              ${q.choices.map((c, idx) => `
+                <button
+                  type="button"
+                  id="choiceBtn-${idx}"
+                  onclick="submitArtChoice('${c.id}', 1, ${idx})"
+                  class="row-pill p-2.5 rounded-2xl flex flex-col items-center gap-2 group overflow-hidden"
+                >
+                  ${renderPaintingBox(c, false, 'w-full h-32 sm:h-40')}
+                  <div class="w-full flex items-center justify-between px-1 text-[11px] font-mono text-[#cbbca4]">
+                    <span>ЭКСПОНАТ #0${idx + 1}</span>
+                    <span>${c.year} г.</span>
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.answerType === 'text_input') {
+        ansEl.innerHTML = `
+          <div class="w-full max-w-lg">
+            <form onsubmit="event.preventDefault(); submitTypedArt();" class="flex gap-2">
+              <input
+                id="typedArtInput"
+                type="text"
+                autocomplete="off"
+                oninput="updateArtAutocomplete(this.value)"
+                placeholder="ВВЕДИТЕ АВТОРА ИЛИ НАЗВАНИЕ КАРТИНЫ..."
+                class="flex-1 px-4 py-3.5 rounded-xl bg-[#11151f]/95 border border-[#ebd6b6]/25 text-[#f5efe4] font-mono text-sm focus:outline-none focus:border-[#f5efe4]"
+              />
+              <button
+                type="submit"
+                class="px-6 py-3.5 rounded-xl bg-[#f5efe4] text-[#111318] font-black uppercase text-xs tracking-wider"
+              >
+                ОТВЕТИТЬ
+              </button>
+            </form>
+            <div id="artAutocompleteBox" class="flex flex-wrap gap-2 mt-3 justify-center"></div>
+          </div>
+        `;
+      } else if (state.answerType === 'chrono_slider') {
+        const span = 180;
+        // Смещаем границы шкалы случайно, чтобы правильный год мог быть в любом месте (от 12% до 88% шкалы)
+        const leftPart = Math.floor(22 + Math.random() * (span - 44));
+        let minY = Math.max(1100, art.year - leftPart);
+        let maxY = Math.min(1995, minY + span);
+        minY = Math.max(1100, maxY - span);
+
+        // Ставим начальное положение ползунка подальше от правильного ответа (минимум > 22 лет разницы),
+        // чтобы нельзя было победить просто нажатием кнопки без сдвига ползунка
+        let startY = Math.round((minY + maxY) / 2);
+        if (Math.abs(startY - art.year) <= 22) {
+          startY = (art.year - minY > maxY - art.year) ? minY + 18 : maxY - 18;
+        }
+
+        ansEl.innerHTML = `
+          <div class="w-full p-5 rounded-2xl bg-[#11151f]/85 border border-[#ebd6b6]/15 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-[#cbbca4]">ХРОНО-ШКАЛА: ${minY} г. — ${maxY} г. (ДОПУСК ±12 ЛЕТ)</span>
+              <span id="tlCurrentLabel" class="text-2xl font-mono font-black text-[#f5efe4]">${startY} г.</span>
+            </div>
+            <input
+              id="tlRangeInput"
+              type="range"
+              min="${minY}"
+              max="${maxY}"
+              value="${startY}"
+              class="tactical-range"
+              oninput="document.getElementById('tlCurrentLabel').textContent = this.value + ' г.'"
+            />
+            <div class="flex justify-end">
+              <button
+                type="button"
+                onclick="submitArtTimeline()"
+                class="px-6 py-3 rounded-xl bg-[#f5efe4] text-[#111318] font-black uppercase text-xs font-mono tracking-wider"
+              >
+                ЗАФИКСИРОВАТЬ ГОД СОЗДАНИЯ
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // Мгновенно подгружаем HD-репродукции для текущего вопроса и вариантов галереи
+      hydrateQuestionImages(q);
+    }
+
+    function updateArtAutocomplete(val) {
+      const box = document.getElementById('artAutocompleteBox');
+      if (!box) return;
+      const q = val.trim().toLowerCase();
+      if (!q) {
+        box.innerHTML = '';
+        return;
+      }
+      const matches = ARTWORKS_DB.filter(a =>
+        a.title.toLowerCase().includes(q) || a.artist.toLowerCase().includes(q)
+      ).slice(0, 4);
+
+      box.innerHTML = matches.map(m => `
+        <button
+          type="button"
+          onclick="submitArtChoice('${m.id}', 1, 0)"
+          class="row-pill px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2"
+        >
+          <span>«${m.title}»</span>
+          <span class="font-mono text-[10px] opacity-65">[${m.artist}]</span>
+        </button>
+      `).join('');
+    }
+
+    function computeTacticalPoints(customStreak = state.streak) {
+      const elapsedSec = (Date.now() - state.roundStartTime) / 1000;
+      const speedBonus = Math.max(5, Math.round(50 - elapsedSec * 4.5));
+      return 100 + speedBonus + customStreak * 20;
+    }
+
+    function zoomOutMacroIfActive() {
+      const wrap = document.getElementById('activeCanvasZoomWrap');
+      if (wrap) {
+        wrap.style.transform = 'scale(1)';
+      }
+      const badge = document.getElementById('macroBadgeOverlay');
+      if (badge) {
+        badge.textContent = '[ ПОЛНОЕ ПОЛОТНО ОТКРЫТО ]';
+      }
+    }
+
+    function showPlayFeedback(isCorrect, headline, subline) {
+      zoomOutMacroIfActive();
+      const fbBox = document.getElementById('playFeedbackBox');
+      fbBox.classList.remove('hidden');
+      fbBox.className = `mt-5 px-5 py-3 rounded-xl border font-mono text-xs sm:text-sm font-bold flex flex-col items-center justify-center gap-1 ${
+        isCorrect
+          ? 'bg-[#f5efe4] text-[#111318] border-[#f5efe4] shadow-[0_0_25px_rgba(245,239,228,0.3)]'
+          : 'bg-rose-950/90 border-rose-500 text-rose-200'
+      }`;
+      fbBox.innerHTML = `
+        <div>${headline}</div>
+        <div class="text-[11px] opacity-80 font-normal">${subline}</div>
+      `;
+      renderPlayTopBar();
+    }
+
+    function advanceNextRound() {
+      setTimeout(() => {
+        if (state.screen !== 'play') return;
+        if (state.totalRounds !== 999 && state.round >= state.totalRounds && state.gameMode !== 'blitz') {
+          finishMatchSession();
+          return;
+        }
+        state.round++;
+        state.feedback = null;
+        if (state.roundPackets && state.roundPackets.length > 0) {
+          state.currentQ = state.roundPackets[(state.round - 1) % state.roundPackets.length];
+        } else {
+          state.currentQ = buildQuestion();
+        }
+        renderPlayScreen();
+      }, 1500);
+    }
+
+    function submitArtChoice(chosenId, player = 1, btnIdx = 0) {
+      if (state.feedback) return;
+      const q = state.currentQ;
+      const art = q.target;
+      const isCorrect = chosenId === art.id;
+      state.feedback = { status: isCorrect ? 'correct' : 'wrong' };
+
+      const btn = document.getElementById(`choiceBtn-${btnIdx}`);
+      if (isCorrect) {
+        if (btn) btn.classList.add('active');
+        sfx.play('correct');
+        if (state.gameMode === 'local_duel') {
+          if (player === 1) {
+            const pts1 = computeTacticalPoints(state.p1Streak);
+            state.p1Score += pts1;
+            state.p1Streak++;
+            state.p1Correct++;
+            showPlayFeedback(true, `ИГРОК 1 ВЕРНО (+${pts1} PTS)! «${art.title.toUpperCase()}» — ${art.artist.toUpperCase()}`, `${art.year} г. • ${art.museum}`);
+          } else {
+            const pts2 = computeTacticalPoints(state.p2Streak);
+            state.p2Score += pts2;
+            state.p2Streak++;
+            state.p2Correct++;
+            showPlayFeedback(true, `ИГРОК 2 ВЕРНО (+${pts2} PTS)! «${art.title.toUpperCase()}» — ${art.artist.toUpperCase()}`, `${art.year} г. • ${art.museum}`);
+          }
+        } else {
+          const pts = computeTacticalPoints(state.streak);
+          state.score += pts;
+          state.streak++;
+          state.correctCount++;
+          showPlayFeedback(
+            true,
+            `✓ ВЕРНО (+${pts} PTS)! «${art.title.toUpperCase()}» — ${art.artist.toUpperCase()}`,
+            `${art.year} г. • ${art.museum}`
+          );
+        }
+      } else {
+        if (btn) {
+          btn.style.background = 'rgba(136, 19, 55, 0.85)';
+          btn.style.borderColor = '#f43f5e';
+        }
+        sfx.play('wrong');
+        if (state.gameMode === 'local_duel') {
+          if (player === 1) state.p1Streak = 0;
+          else state.p2Streak = 0;
+        } else {
+          state.streak = 0;
+        }
+        showPlayFeedback(
+          false,
+          `✕ ОШИБКА! ЭТО «${art.title.toUpperCase()}» (${art.artist.toUpperCase()})`,
+          `${art.year} г. • ${art.museum}`
+        );
+        if (state.gameMode === 'survival') {
+          state.lives--;
+          if (state.lives <= 0) {
+            setTimeout(() => {
+              finishMatchSession();
+            }, 1500);
+            return;
+          }
+        }
+      }
+      advanceNextRound();
+    }
+
+    function submitTypedArt() {
+      if (state.feedback) return;
+      const inp = document.getElementById('typedArtInput');
+      if (!inp || !inp.value.trim()) return;
+      const val = inp.value.trim().toLowerCase().replace(/ё/g, 'е');
+      const art = state.currentQ.target;
+      const titleClean = art.title.toLowerCase().replace(/ё/g, 'е');
+      const artistClean = art.artist.toLowerCase().replace(/ё/g, 'е');
+
+      const matched = titleClean.includes(val) || artistClean.includes(val);
+      submitArtChoice(matched ? art.id : 'WRONG', 1, 0);
+    }
+
+    function submitArtTimeline() {
+      if (state.feedback) return;
+      const val = parseInt(document.getElementById('tlRangeInput').value, 10);
+      const art = state.currentQ.target;
+      const diff = Math.abs(val - art.year);
+      const isCorrect = diff <= 12;
+      state.feedback = { status: isCorrect ? 'correct' : 'wrong' };
+
+      if (isCorrect) {
+        sfx.play('correct');
+        const pts = computeTacticalPoints();
+        state.score += pts;
+        state.streak++;
+        state.correctCount++;
+        showPlayFeedback(
+          true,
+          `✓ ТОЧНОСТЬ ±${diff} ЛЕТ (+${pts} PTS)! ГОД СОЗДАНИЯ: ${art.year} г.`,
+          `«${art.title}» — ${art.artist} (${art.museum})`
+        );
+      } else {
+        sfx.play('wrong');
+        state.streak = 0;
+        showPlayFeedback(
+          false,
+          `✕ ОТКЛОНЕНИЕ ${diff} ЛЕТ! ИСТИННЫЙ ГОД: ${art.year} г.`,
+          `«${art.title}» — ${art.artist}`
+        );
+      }
+      advanceNextRound();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (state.screen !== 'play' || state.answerType !== 'choices_4' || state.feedback) return;
+      const k = e.key.toLowerCase();
+      const q = state.currentQ;
+      if (!q) return;
+
+      if (state.gameMode === 'local_duel') {
+        const p1Map = { '1': 0, '2': 1, '3': 2, '4': 3, 'w': 0, 'a': 1, 's': 2, 'd': 3, 'ц': 0, 'ф': 1, 'ы': 2, 'в': 3 };
+        const p2Map = { 'arrowup': 0, 'arrowleft': 1, 'arrowdown': 2, 'arrowright': 3 };
+        if (k in p1Map && q.choices[p1Map[k]]) {
+          e.preventDefault();
+          submitArtChoice(q.choices[p1Map[k]].id, 1, p1Map[k]);
+        } else if (k in p2Map && q.choices[p2Map[k]]) {
+          e.preventDefault();
+          submitArtChoice(q.choices[p2Map[k]].id, 2, p2Map[k]);
+        }
+      } else {
+        const soloMap = { '1': 0, '2': 1, '3': 2, '4': 3 };
+        if (k in soloMap && q.choices[soloMap[k]]) {
+          e.preventDefault();
+          submitArtChoice(q.choices[soloMap[k]].id, 1, soloMap[k]);
+        }
+      }
+    });
+
+    function renderSummary() {
+      const box = document.getElementById('summaryStatsContent');
+      const playAgainBtn = document.getElementById('summaryPlayAgainBtn');
+      if (playAgainBtn) {
+        playAgainBtn.classList.toggle('hidden', state.gameMode === 'online_duel');
+      }
+
+      const roundsLabel = state.totalRounds === 999 ? state.round : state.totalRounds;
+
+      if (state.gameMode === 'local_duel') {
+        const winnerText = state.p1Score > state.p2Score
+          ? 'ПОБЕДИЛ ИГРОК 1!'
+          : state.p2Score > state.p1Score
+          ? 'ПОБЕДИЛ ИГРОК 2!'
+          : 'АБСОЛЮТНАЯ НИЧЬЯ!';
+        box.innerHTML = `
+          <div class="space-y-4">
+            <div class="text-xl font-black text-emerald-400 uppercase tracking-wider">${winnerText}</div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-5 rounded-2xl bg-black/55 border ${state.p1Score >= state.p2Score ? 'border-[#f5efe4]' : 'border-[#ebd6b6]/15'}">
+                <div class="text-xs font-mono font-normal text-[#cbbca4]">ИГРОК 1 (${state.p1Correct}/${roundsLabel})</div>
+                <div class="text-3xl sm:text-4xl font-mono font-black text-[#f5efe4] mt-1">${state.p1Score} PTS</div>
+              </div>
+              <div class="p-5 rounded-2xl bg-black/55 border ${state.p2Score >= state.p1Score ? 'border-[#f5efe4]' : 'border-[#ebd6b6]/15'}">
+                <div class="text-xs font-mono font-normal text-[#cbbca4]">ИГРОК 2 (${state.p2Correct}/${roundsLabel})</div>
+                <div class="text-3xl sm:text-4xl font-mono font-black text-[#f5efe4] mt-1">${state.p2Score} PTS</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (state.gameMode === 'online_duel') {
+        if (!state.opponentFinished) {
+          box.innerHTML = `
+            <div class="space-y-4">
+              <div class="p-5 rounded-2xl bg-black/55 border border-[#ebd6b6]/25">
+                <div class="text-xs font-mono font-normal text-[#cbbca4]">ВАШ ИТОГОВЫЙ СЧЁТ (${state.correctCount}/${roundsLabel})</div>
+                <div class="text-4xl font-mono font-black text-[#f5efe4] mt-1">${state.score} PTS</div>
+              </div>
+              <div class="p-5 rounded-2xl bg-black/40 border border-[#ebd6b6]/15 space-y-2">
+                <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping mx-auto"></div>
+                <div class="font-mono text-xs text-emerald-400 font-bold uppercase">
+                  ОЖИДАНИЕ ЗАВЕРШЕНИЯ ИГРЫ ВТОРЫМ ИГРОКОМ...
+                </div>
+                <div class="text-xs text-[#cbbca4]">
+                  Как только соперник ответит на ${roundsLabel}-й вопрос, здесь автоматически появится его настоящий счёт!
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          const winOnline = state.score > state.opponentFinalScore
+            ? 'ВЫ ПОБЕДИЛИ В ОНЛАЙН-ДУЭЛИ!'
+            : state.score < state.opponentFinalScore
+            ? 'ПОБЕДИЛ СОПЕРНИК!'
+            : 'БОЕВАЯ НИЧЬЯ!';
+          box.innerHTML = `
+            <div class="space-y-4">
+              <div class="text-xl font-black text-emerald-400 uppercase tracking-wider">${winOnline}</div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-5 rounded-2xl bg-black/55 border ${state.score >= state.opponentFinalScore ? 'border-[#f5efe4]' : 'border-[#ebd6b6]/15'}">
+                  <div class="text-xs font-mono font-normal text-[#cbbca4]">ВЫ (${state.correctCount}/${roundsLabel})</div>
+                  <div class="text-3xl sm:text-4xl font-mono font-black text-[#f5efe4] mt-1">${state.score} PTS</div>
+                </div>
+                <div class="p-5 rounded-2xl bg-black/55 border ${state.opponentFinalScore >= state.score ? 'border-[#f5efe4]' : 'border-[#ebd6b6]/15'}">
+                  <div class="text-xs font-mono font-normal text-[#cbbca4]">СОПЕРНИК (${state.opponentCorrectCount}/${roundsLabel})</div>
+                  <div class="text-3xl sm:text-4xl font-mono font-black text-[#f5efe4] mt-1">${state.opponentFinalScore} PTS</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        box.innerHTML = `
+          <div class="p-6 rounded-2xl bg-black/55 border border-[#ebd6b6]/20 space-y-2">
+            <div class="text-xs font-mono font-normal text-[#cbbca4]">
+              ${state.gameMode === 'blitz'
+                ? `ИТОГ БЛИЦА ЗА 60 СЕКУНД (ТОЧНЫХ ОТВЕТОВ: ${state.correctCount})`
+                : `ВАШ ИТОГОВЫЙ СЧЁТ (ТОЧНОСТЬ: ${state.correctCount} ИЗ ${roundsLabel})`}
+            </div>
+            <div class="text-5xl font-mono font-black text-[#f5efe4]">${state.score} PTS</div>
+          </div>
+        `;
+      }
+    }
+
+    function setupConnListeners(conn) {
+      if (!conn) return;
+      conn.on('data', data => {
+        if (!data || !data.type) return;
+
+        if (data.type === 'INIT_MATCH') {
+          state.scope = data.settings.scope;
+          state.era = data.settings.era;
+          state.questionType = data.settings.questionType;
+          state.answerType = data.settings.answerType;
+          state.totalRounds = data.settings.totalRounds || 10;
+          state.gameMode = 'online_duel';
+          renderConstructor();
+          startSession(data.packets);
+        }
+
+        if (data.type === 'MATCH_FINISHED') {
+          state.opponentFinished = true;
+          state.opponentFinalScore = data.finalScore || 0;
+          state.opponentCorrectCount = data.correctCount || 0;
+          if (state.screen === 'summary') {
+            sfx.play('correct');
+            renderSummary();
+          }
+        }
+      });
+    }
+
+    function createPeerHost() {
+      const code = document.getElementById('roomCodeDisplay').textContent;
+      document.getElementById('lobbyStatus').textContent = `КОМНАТА #${code} ГОТОВА (${state.totalRounds === 999 ? '∞' : state.totalRounds} РАУНДОВ) // ОЖИДАНИЕ ИГРОКА 2...`;
+      if (typeof Peer === 'undefined') return;
+      if (state.peer) state.peer.destroy();
+      state.peer = new Peer('ARTMATRIX-' + code);
+      state.peer.on('connection', conn => {
+        state.conn = conn;
+        setupConnListeners(conn);
+        conn.on('open', () => {
+          const packets = generateMatchPackets(state.totalRounds);
+          conn.send({
+            type: 'INIT_MATCH',
+            settings: {
+              scope: state.scope,
+              era: state.era,
+              questionType: state.questionType,
+              answerType: state.answerType,
+              totalRounds: state.totalRounds
+            },
+            packets
+          });
+          document.getElementById('lobbyStatus').textContent = 'ИГРОК 2 ПОДКЛЮЧИЛСЯ! СИНХРОНИЗАЦИЯ ГАЛЕРЕИ...';
+          startSession(packets);
+        });
+      });
+    }
+
+    function joinPeerRoom() {
+      const code = document.getElementById('joinCodeInput').value.replace(/\D/g, '').trim();
+      if (code.length !== 4) {
+        document.getElementById('lobbyStatus').textContent = 'ВВЕДИТЕ 4-ЗНАЧНЫЙ КОД КОМНАТЫ ДРУГА!';
+        return;
+      }
+      sfx.play('click');
+      document.getElementById('lobbyStatus').textContent = `ПОДКЛЮЧЕНИЕ К КОМНАТЕ #${code}...`;
+      if (typeof Peer === 'undefined') return;
+      if (state.peer) state.peer.destroy();
+      state.peer = new Peer();
+      state.peer.on('open', () => {
+        const conn = state.peer.connect('ARTMATRIX-' + code, { reliable: true });
+        state.conn = conn;
+        setupConnListeners(conn);
+        conn.on('error', () => {
+          document.getElementById('lobbyStatus').textContent = `НЕ УДАЛОСЬ НАЙТИ КОМНАТУ #${code}`;
+        });
+      });
+    }
+
+    renderConstructor();
+    preloadGalleryBatch();
+  </script>
+</body>
+</html>
